@@ -13,12 +13,16 @@ export class MainMenu extends Scene {
   }
 
   create() {
-    this.background = this.add.image(512, 384, "background");
+    const width = this.scale.width;
+    const height = this.scale.height;
 
-    this.logo = this.add.image(512, 300, "logo").setDepth(100);
+    this.background = this.add.image(width / 2, height / 2, "background");
+    this.background.setDisplaySize(width, height);
+
+    this.logo = this.add.image(width / 2, height * 0.4, "logo").setDepth(100);
 
     this.title = this.add
-      .text(512, 460, "Main Menu", {
+      .text(width / 2, height * 0.6, "Main Menu", {
         fontFamily: "Arial Black",
         fontSize: 38,
         color: "#ffffff",

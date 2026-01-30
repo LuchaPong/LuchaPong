@@ -15,6 +15,18 @@ body {
   align-items: center;
 }
 
+.controls {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  transform: translateY(-50%);
+}
+
 .spritePosition {
   margin: 10px 0 0 10px;
   font-size: 0.8em;
