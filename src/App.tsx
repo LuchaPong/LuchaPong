@@ -72,23 +72,27 @@ function App() {
           Change Scene
         </button>
 
-        <button
-          disabled={canMoveSprite}
-          className="button"
-          onClick={moveSprite}
-        >
-          Toggle Movement
-        </button>
+        {!canMoveSprite && (
+          <>
+            <button
+              disabled={canMoveSprite}
+              className="button"
+              onClick={moveSprite}
+            >
+              Toggle Movement
+            </button>
 
-        <div className="spritePosition">
-          Sprite Position:
-          <pre>{`{\n  x: ${spritePosition.x}\n  y: ${spritePosition.y}\n}`}</pre>
-        </div>
-        <div>
-          <button className="button" onClick={addSprite}>
-            Add New Sprite
-          </button>
-        </div>
+            <div className="spritePosition">
+              Sprite Position:
+              <pre>{`{\n  x: ${spritePosition.x}\n  y: ${spritePosition.y}\n}`}</pre>
+            </div>
+            <div>
+              <button className="button" onClick={addSprite}>
+                Add New Sprite
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
