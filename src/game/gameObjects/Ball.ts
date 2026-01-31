@@ -42,7 +42,55 @@ export class Ball extends Phaser.GameObjects.Container {
     this.setNewVelocityByAngle(randomAngle + leftOrRight);
   }
 
-  update(_time: number, _delta: number): void {}
+  protected SPAWN_STEP_INTERVAL = 30;
+  protected timeSinceLastStepSpawn = 0;
+  protected lastStepWasLeft = false;
+
+  update(_time: number, delta: number): void {
+    this.timeSinceLastStepSpawn += delta;
+
+    if (this.timeSinceLastStepSpawn >= this.SPAWN_STEP_INTERVAL) {
+      this.timeSinceLastStepSpawn = 0;
+
+      const offset = this.lastStepWasLeft ? -1 : 1;
+
+      const normalizedVelocity = this.body.velocity.clone().normalize();
+      const direction = normalizedVelocity
+        .clone()
+        .rotate(Math.PI / 2)
+        .scale(offset * 4);
+
+      const position = new Phaser.Math.Vector2(this.x, this.y)
+        .subtract(normalizedVelocity.clone().scale(8))
+        .add(direction);
+
+      const step = this.scene.add
+        .graphics()
+        .fillStyle(0xffff00, 1)
+        .fillCircle(position.x, position.y, 3)
+        .fillCircle(
+          position.x - normalizedVelocity.x * 4,
+          position.y - normalizedVelocity.y * 4,
+          2,
+        )
+        .setDepth(1000)
+        .setScrollFactor(0)
+        .setAlpha(0.5)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(-10);
+
+      this.scene.tweens.add({
+        targets: step,
+        alpha: 0,
+        duration: 1000,
+        onComplete: () => {
+          step.destroy();
+        },
+      });
+
+      this.lastStepWasLeft = !this.lastStepWasLeft;
+    }
+  }
 
   setNewVelocityByAngle(newAngle: number) {
     this.body.setVelocity(
