@@ -12,6 +12,8 @@ export class Paddle extends Phaser.GameObjects.Container {
   protected controlTexts: Record<string, Phaser.GameObjects.Text> = {};
 
   centerSize = 0.4;
+  protected DEFAULT_SPEED = 500;
+  protected speed: number = this.DEFAULT_SPEED;
 
   get player() {
     return this._player;
@@ -103,9 +105,9 @@ export class Paddle extends Phaser.GameObjects.Container {
 
   update(_time: number, _delta: number): void {
     if (this.controls.up.isDown) {
-      this.body.setVelocityY(-500);
+      this.body.setVelocityY(-this.speed);
     } else if (this.controls.down.isDown) {
-      this.body.setVelocityY(500);
+      this.body.setVelocityY(this.speed);
     } else {
       this.body.setVelocityY(0);
     }
@@ -121,6 +123,39 @@ export class Paddle extends Phaser.GameObjects.Container {
         text.setAlpha(1);
       }
     });
+
+    if (Phaser.Input.Keyboard.JustDown(this.controls.skill1)) {
+      this.eventBus?.emit("paddle-skill-used", this.player, 1);
+    }
+    if (Phaser.Input.Keyboard.JustDown(this.controls.skill2)) {
+      this.eventBus?.emit("paddle-skill-used", this.player, 2);
+    }
+  }
+
+  setLength(factor: number) {
+    this.scene.tweens.add({
+      targets: this,
+      duration: 150,
+      ease: "Sine.easeInOut",
+      props: {
+        height: 150 * factor,
+      },
+      onUpdate: () => {
+        this.body.setSize(this.width, this.height);
+      },
+    });
+    this.scene.tweens.add({
+      targets: this.paddleSprite,
+      duration: 150,
+      ease: "Sine.easeInOut",
+      props: {
+        scaleY: (150 * factor) / this.paddleSprite.height,
+      },
+    });
+  }
+
+  setSpeed(factor: number) {
+    this.speed = this.DEFAULT_SPEED * factor;
   }
 
   onCollisionWithBall(ball: Ball): void {

@@ -1,7 +1,9 @@
 import { Events } from "phaser";
 import type { TypedEventEmitter } from "../../utils/TypedEventEmitter";
+import type { AbstractEffect } from "../effects/AbstractEffect";
+import { PaddleEffect } from "../effects/PaddleSize";
 import type { Ball } from "../gameObjects/Ball";
-import type { Paddle } from "../gameObjects/Paddle";
+import { Paddle } from "../gameObjects/Paddle";
 import type { GameEvents } from "./GameEvents";
 
 export class GameManager implements TypedEventEmitter<GameEvents> {
@@ -12,18 +14,27 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     left: Paddle;
     right: Paddle;
   };
+  protected scene: Phaser.Scene;
   protected world: Phaser.Physics.Arcade.World;
   protected physics: Phaser.Physics.Arcade.ArcadePhysics;
+
+  protected _activeEffects: AbstractEffect[] = [];
+
+  get activeEffects() {
+    return this._activeEffects;
+  }
 
   constructor(params: {
     ball: Ball;
     paddles: { left: Paddle; right: Paddle };
     bounds: Phaser.GameObjects.Layer;
+    scene: Phaser.Scene;
     physics: Phaser.Physics.Arcade.ArcadePhysics;
   }) {
     this.ball = params.ball;
     this.paddles = params.paddles;
     this.world = params.physics.world;
+    this.scene = params.scene;
     this.physics = params.physics;
 
     this.ball.eventBus = this;
@@ -55,6 +66,26 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
       this.ballLeftPlayArea(side === "left" ? "right" : "left");
     });
 
+    this.on("paddle-skill-used", (player, skillNumber) => {
+      const selfPaddle =
+        player === "left" ? this.paddles.left : this.paddles.right;
+      const otherPaddle =
+        player === "left" ? this.paddles.right : this.paddles.left;
+
+      const newEffect =
+        skillNumber === 1
+          ? new PaddleEffect(this, 1.5, 0.75, selfPaddle)
+          : new PaddleEffect(this, 0.7, 1.5, otherPaddle);
+
+      if (this._activeEffects.some((e) => e.isExclusiveWith(newEffect))) {
+        return;
+      }
+
+      this._activeEffects.push(newEffect);
+
+      newEffect.apply();
+    });
+
     this.setupNewRound();
   }
 
@@ -70,6 +101,8 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
   emit<K extends keyof GameEvents>(event: K, ...args: GameEvents[K]): this {
     this.eventBus.emit(event, ...args);
 
+    console.log(`Event emitted: ${event}`, ...args);
+
     return this;
   }
 
@@ -77,9 +110,30 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     this.ball.update(time, delta);
     this.paddles.left.update(time, delta);
     this.paddles.right.update(time, delta);
+
+    let effectsToRemove: number[] = [];
+
+    this._activeEffects.forEach((effect, i) => {
+      effect.update(time, delta);
+
+      if (effect.durationMs <= 0) {
+        effectsToRemove.push(i);
+      }
+    });
+
+    effectsToRemove.forEach((index) => {
+      const effect = this._activeEffects.splice(index, 1);
+
+      effect[0].remove();
+    });
   }
 
   setupNewRound() {
+    this._activeEffects.forEach((effect) => {
+      effect.remove();
+    });
+    this._activeEffects = [];
+
     this.ball.setPosition(this.world.bounds.centerX, this.world.bounds.centerY);
     this.ball.setInitialVelocity();
 

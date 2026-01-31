@@ -1,0 +1,32 @@
+import type { GameManager } from "../systems/GameManager";
+
+export abstract class AbstractEffect {
+  protected gameManager: GameManager;
+  protected _durationMs: number = 5000;
+
+  get durationMs(): number {
+    return this._durationMs;
+  }
+
+  constructor(gameManager: GameManager) {
+    this.gameManager = gameManager;
+  }
+
+  apply(): void {
+    this.gameManager.emit("effect-applied", this);
+  }
+  remove(): void {
+    this.gameManager.emit("effect-removed", this);
+  }
+
+  update(_time: number, delta: number) {
+    if (this._durationMs !== Infinity) {
+      this._durationMs -= delta;
+    }
+  }
+
+  isExclusiveWith(otherEffect: AbstractEffect): boolean {
+    return this === otherEffect;
+  }
+}
+

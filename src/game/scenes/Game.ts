@@ -10,6 +10,7 @@ export class Game extends Scene {
   background: Phaser.GameObjects.Image;
 
   gameManager: GameManager;
+  effectsText: Phaser.GameObjects.Text;
 
   constructor() {
     super("Game");
@@ -38,6 +39,14 @@ export class Game extends Scene {
       .strokeCircle(width / 2, height / 2, 100)
       .strokeLineShape(new Phaser.Geom.Line(width / 2, 0, width / 2, height));
 
+    this.effectsText = this.add
+      .text(10, 10, "Active Effects:")
+      .setDepth(1000)
+      .setFontSize(16)
+      .setFontFamily("Arial Black")
+      .setColor("#ffffff")
+      .setStroke("#000000", 4);
+
     this.gameManager = new GameManager({
       ball: new Ball(this),
       paddles: {
@@ -55,6 +64,7 @@ export class Game extends Scene {
         }),
       },
       bounds,
+      scene: this,
       physics: this.physics,
     });
 
@@ -75,5 +85,11 @@ export class Game extends Scene {
 
   update(time: number, delta: number): void {
     this.gameManager.update(time, delta);
+
+    this.effectsText.setText(
+      `Active Effects:\n${this.gameManager.activeEffects
+        .map((e) => `- ${e} (${(e.durationMs / 1000).toFixed(0)}s left)`)
+        .join("\n")}`,
+    );
   }
 }
