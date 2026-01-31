@@ -54,6 +54,14 @@ export class Game extends Scene {
       physics: this.physics,
     });
 
+    this.gameManager.on("ball-reflect-on-paddle", () => {
+      this.camera.shake(150, 0.001);
+    });
+
+    this.gameManager.on("ball-reflect-on-scene-edge", () => {
+      this.camera.shake(150, 0.0025);
+    });
+
     EventBus.emit("current-scene-ready", this);
   }
 
