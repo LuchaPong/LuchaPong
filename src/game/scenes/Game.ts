@@ -1,17 +1,15 @@
 import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
 import { Ball } from "../gameObjects/Ball";
+import { Bound } from "../gameObjects/Bound";
 import { Paddle } from "../gameObjects/Paddle";
+import { GameManager } from "../systems/GameManager";
 
 export class Game extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
   background: Phaser.GameObjects.Image;
 
-  ball: Ball;
-  leftPaddle: Paddle;
-  rightPaddle: Paddle;
-
-  cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+  gameManager: GameManager;
 
   constructor() {
     super("Game");
@@ -21,34 +19,42 @@ export class Game extends Scene {
     const { width, height } = this.scale;
     this.camera = this.cameras.main;
     this.camera.setBackgroundColor(0x5d5d5d);
+    this.camera.zoom = 1;
 
-    this.physics.world.setBounds(-128, 0, width + 128 * 2, height);
+    const bounds = this.add.layer([
+      new Bound(this, width / 2, -10, width * 2, 20).setName("bound-top"),
+      new Bound(this, width / 2, height + 10, width * 2, 20).setName(
+        "bound-bottom",
+      ),
+      new Bound(this, -50, height / 2, 20, height * 2).setName("bound-left"),
+      new Bound(this, width + 50, height / 2, 20, height * 2).setName(
+        "bound-right",
+      ),
+    ]);
 
-    this.ball = new Ball(this, width / 2, height / 2);
-    this.ball.setInitialVelocity();
+    this.add
+      .graphics()
+      .lineStyle(2, 0xffffff, 1)
+      .strokeCircle(width / 2, height / 2, 100)
+      .strokeLineShape(new Phaser.Geom.Line(width / 2, 0, width / 2, height));
 
-    this.leftPaddle = new Paddle(this, 50, height / 2);
-    this.rightPaddle = new Paddle(this, width - 50, height / 2);
-
-    this.physics.add.collider(
-      this.ball,
-      this.leftPaddle,
-      () => this.ball.onCollisionWithPaddle(this.leftPaddle),
-    );
-    this.physics.add.collider(
-      this.ball,
-      this.rightPaddle,
-      () => this.ball.onCollisionWithPaddle(this.rightPaddle),
-    );
-
-    EventBus.emit("current-scene-ready", this);
-    EventBus.on("ball-scored", (scoringPlayer: "left" | "right") => {
-      console.log(`Player scored: ${scoringPlayer}`);
-      this.ball.setPosition(width / 2, height / 2);
-      this.ball.setInitialVelocity();
+    this.gameManager = new GameManager({
+      ball: new Ball(this),
+      paddles: {
+        left: new Paddle(this, "left", {
+          up: this.input.keyboard!.addKey("W"),
+          down: this.input.keyboard!.addKey("S"),
+        }),
+        right: new Paddle(this, "right", {
+          up: this.input.keyboard!.addKey("I"),
+          down: this.input.keyboard!.addKey("K"),
+        }),
+      },
+      bounds,
+      physics: this.physics,
     });
 
-    this.cursors = this.input.keyboard!.createCursorKeys();
+    EventBus.emit("current-scene-ready", this);
   }
 
   changeScene() {
@@ -56,24 +62,6 @@ export class Game extends Scene {
   }
 
   update(time: number, delta: number): void {
-    this.ball.update(time, delta);
-
-    // Left paddle (W/S keys)
-    if (this.input.keyboard!.addKey("W").isDown) {
-      this.leftPaddle.physicsBody.setVelocityY(-300);
-    } else if (this.input.keyboard!.addKey("S").isDown) {
-      this.leftPaddle.physicsBody.setVelocityY(300);
-    } else {
-      this.leftPaddle.physicsBody.setVelocityY(0);
-    }
-
-    // Right paddle (Up/Down arrow keys)
-    if (this.cursors.up!.isDown) {
-      this.rightPaddle.physicsBody.setVelocityY(-300);
-    } else if (this.cursors.down!.isDown) {
-      this.rightPaddle.physicsBody.setVelocityY(300);
-    } else {
-      this.rightPaddle.physicsBody.setVelocityY(0);
-    }
+    this.gameManager.update(time, delta);
   }
 }
