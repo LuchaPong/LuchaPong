@@ -9,7 +9,9 @@ export class Paddle extends Phaser.GameObjects.Container {
 
   eventBus?: TypedEventEmitter<GameEvents>;
 
-  centerSize = 0.40;
+  protected controlTexts: Record<string, Phaser.GameObjects.Text> = {};
+
+  centerSize = 0.4;
 
   get player() {
     return this._player;
@@ -21,6 +23,8 @@ export class Paddle extends Phaser.GameObjects.Container {
     protected controls: {
       up: Phaser.Input.Keyboard.Key;
       down: Phaser.Input.Keyboard.Key;
+      skill1: Phaser.Input.Keyboard.Key;
+      skill2: Phaser.Input.Keyboard.Key;
     },
   ) {
     super(scene, 0, 0);
@@ -57,29 +61,44 @@ export class Paddle extends Phaser.GameObjects.Container {
     paddleCenterSprite.setTint(_player === "left" ? 0x3498db : 0xe74c3c);
     this.add(paddleCenterSprite);
 
-    this.add(
-      new Phaser.GameObjects.Text(
-        scene,
+    const offsetSides = (this.centerSize + 1) / 4;
+
+    this.addTextForControl(0, this.height * offsetSides, this.controls.down)
+      .addTextForControl(0, -(this.height * offsetSides), this.controls.up)
+      .addTextForControl(
         0,
-        this.height / 2 - 16,
-        String.fromCharCode(this.controls.down.keyCode),
-        {
-          fontSize: "16px",
-          color: "#000000",
-        },
-      ).setOrigin(0.5, 0.5),
-    ).add(
-      new Phaser.GameObjects.Text(
-        scene,
+        (this.height / 2) * (this.centerSize / 2),
+        this.controls.skill1,
+      )
+      .addTextForControl(
         0,
-        -this.height / 2 + 16,
-        String.fromCharCode(this.controls.up.keyCode),
-        {
-          fontSize: "16px",
-          color: "#000000",
-        },
-      ).setOrigin(0.5, 0.5),
-    );
+        -((this.height / 2) * (this.centerSize / 2)),
+        this.controls.skill2,
+      );
+  }
+
+  addTextForControl(x: number, y: number, key: Phaser.Input.Keyboard.Key) {
+    const fontSize = 16;
+
+    const text = new Phaser.GameObjects.Text(
+      this.scene,
+      x,
+      y,
+      String.fromCharCode(key.keyCode),
+      {
+        fontSize: `${fontSize}px`,
+        fontFamily: "Arial Black",
+        color: "#ffffff",
+        stroke: "#000000",
+        strokeThickness: 4,
+      },
+    ).setOrigin(0.5, 0.5);
+
+    this.add(text);
+
+    this.controlTexts[String.fromCharCode(key.keyCode)] = text;
+
+    return this;
   }
 
   update(_time: number, _delta: number): void {
@@ -90,6 +109,18 @@ export class Paddle extends Phaser.GameObjects.Container {
     } else {
       this.body.setVelocityY(0);
     }
+
+    Object.values(this.controls).forEach((control) => {
+      const text = this.controlTexts[String.fromCharCode(control.keyCode)];
+
+      if (control.isDown) {
+        text.setScale(0.9);
+        text.setAlpha(0.6);
+      } else {
+        text.setScale(1);
+        text.setAlpha(1);
+      }
+    });
   }
 
   onCollisionWithBall(ball: Ball): void {

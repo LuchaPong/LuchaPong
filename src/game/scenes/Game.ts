@@ -44,10 +44,14 @@ export class Game extends Scene {
         left: new Paddle(this, "left", {
           up: this.input.keyboard!.addKey("W"),
           down: this.input.keyboard!.addKey("S"),
+          skill1: this.input.keyboard!.addKey("Q"),
+          skill2: this.input.keyboard!.addKey("E"),
         }),
         right: new Paddle(this, "right", {
           up: this.input.keyboard!.addKey("I"),
           down: this.input.keyboard!.addKey("K"),
+          skill1: this.input.keyboard!.addKey("U"),
+          skill2: this.input.keyboard!.addKey("O"),
         }),
       },
       bounds,
