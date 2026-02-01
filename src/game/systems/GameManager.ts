@@ -223,12 +223,12 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
 
     // ease out of the shake
     cam.flash(200, 255, 255, 255);
-    cam.shake(this.explosionDurationMs / 3, 0.15);
+    cam.shake(this.explosionDurationMs / 3, 0.015);
     this.scene.time.delayedCall(this.explosionDurationMs / 3, () =>
-      cam.shake(this.explosionDurationMs / 3, 0.09),
+      cam.shake(this.explosionDurationMs / 3, 0.009),
     );
     this.scene.time.delayedCall((this.explosionDurationMs / 3) * 2, () =>
-      cam.shake(this.explosionDurationMs / 3, 0.04),
+      cam.shake(this.explosionDurationMs / 3, 0.004),
     );
 
     const boom = scene.add
@@ -252,4 +252,3 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     });
   }
 }
-
