@@ -75,8 +75,6 @@ export class Ball extends Phaser.GameObjects.Container {
           position.y - normalizedVelocity.y * 4,
           2,
         )
-        .setDepth(1000)
-        .setScrollFactor(0)
         .setAlpha(0.5)
         .setBlendMode(Phaser.BlendModes.ADD)
         .setDepth(-10);
