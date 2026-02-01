@@ -2,6 +2,7 @@ import { Boot } from "./scenes/Boot";
 import { GameOver } from "./scenes/GameOver";
 import { Game as MainGame } from "./scenes/Game";
 import { MainMenu } from "./scenes/MainMenu";
+import { Controls } from "./scenes/Controls";
 import { AUTO, Game } from "phaser";
 import { Preloader } from "./scenes/Preloader";
 
@@ -13,7 +14,7 @@ const config: Phaser.Types.Core.GameConfig = {
   height: "100%",
   parent: "game-container",
   backgroundColor: "#028af8",
-  scene: [Boot, Preloader, MainMenu, MainGame, GameOver],
+  scene: [Boot, Preloader, MainMenu, MainGame, Controls, GameOver],
   physics: {
     default: "arcade",
     arcade: {
