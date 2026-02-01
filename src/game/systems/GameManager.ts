@@ -1,11 +1,11 @@
 import { Events } from "phaser";
 import type { TypedEventEmitter } from "../../utils/TypedEventEmitter";
-import type { AbstractEffect } from "../effects/AbstractEffect";
 import type { EffectLoadout } from "../data/EffectLoadouts";
 import {
   getDefaultLoadouts,
   getDifferentLoadout,
 } from "../data/EffectLoadouts";
+import type { AbstractEffect } from "../effects/AbstractEffect";
 import type { Ball } from "../gameObjects/Ball";
 import { Paddle } from "../gameObjects/Paddle";
 import { Projectile } from "../gameObjects/Projectile";
@@ -212,6 +212,11 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
   }
 
   startRound() {
+    this.activeEffects.forEach((effect) => {
+      effect.remove();
+    });
+    this._activeEffects = [];
+
     this.resetBallVisual();
     this.ball.body.checkCollision.none = false;
 
@@ -298,13 +303,15 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     const duration = this.explosionDurationMs;
 
     // ease out of the shake
+    const SHAKE_INTENSITY = 0.06;
+
     cam.flash(200, 255, 255, 255);
-    cam.shake(this.explosionDurationMs / 3, 0.15);
+    cam.shake(this.explosionDurationMs / 3, 0.15 * SHAKE_INTENSITY);
     this.scene.time.delayedCall(this.explosionDurationMs / 3, () =>
-      cam.shake(this.explosionDurationMs / 3, 0.09),
+      cam.shake(this.explosionDurationMs / 3, 0.09 * SHAKE_INTENSITY),
     );
     this.scene.time.delayedCall((this.explosionDurationMs / 3) * 2, () =>
-      cam.shake(this.explosionDurationMs / 3, 0.04),
+      cam.shake(this.explosionDurationMs / 3, 0.04 * SHAKE_INTENSITY),
     );
 
     const boom = scene.add
