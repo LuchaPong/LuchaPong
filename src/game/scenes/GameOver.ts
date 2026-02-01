@@ -1,10 +1,11 @@
+import { createInteractiveButton, createText } from "../../utils/Utils";
 import { EventBus } from "../EventBus";
-import { Scene } from "phaser";
+import { GameObjects, Scene } from "phaser";
 
 export class GameOver extends Scene {
-  camera: Phaser.Cameras.Scene2D.Camera;
-  background: Phaser.GameObjects.Image;
-  gameOverText: Phaser.GameObjects.Text;
+  restartButton: GameObjects.Sprite;
+  settingsButton: GameObjects.Sprite;
+  menuButton: GameObjects.Sprite;
 
   constructor() {
     super("GameOver");
@@ -15,21 +16,44 @@ export class GameOver extends Scene {
   }
 
   create() {
-    this.camera = this.cameras.main;
-    this.camera.setBackgroundColor(0x000000);
+    // Use last frame to render over
     this.add.image(0, 0, "lastGameFrame").setOrigin(0);
 
-    this.gameOverText = this.add
-      .text(512, 384, "Game Over", {
-        fontFamily: "Arial Black",
-        fontSize: 64,
-        color: "#ffffff",
-        stroke: "#000000",
-        strokeThickness: 8,
-        align: "center",
-      })
-      .setOrigin(0.5)
-      .setDepth(100);
+    createText(
+      this,
+      "GAME OVER",
+      this.scale.width / 2,
+      this.scale.height * 0.2,
+      64,
+    );
+
+    this.restartButton = createInteractiveButton(
+      this,
+      "RESTART",
+      this.scale.width / 2,
+      this.scale.height / 2,
+      () => {
+        this.scene.start("Game");
+      },
+    );
+    this.settingsButton = createInteractiveButton(
+      this,
+      "SETTINGS",
+      this.scale.width / 2,
+      this.scale.height / 2 + this.restartButton.height,
+      () => {
+        this.scene.start("Controls");
+      },
+    );
+    this.menuButton = createInteractiveButton(
+      this,
+      "MAIN MENU",
+      this.scale.width / 2,
+      this.scale.height / 2 + 2 * this.settingsButton.height,
+      () => {
+        this.scene.start("MainMenu");
+      },
+    );
 
     this.sound.play("gameover", { rate: 0.85 });
     EventBus.emit("current-scene-ready", this);
