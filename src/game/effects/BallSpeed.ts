@@ -22,8 +22,9 @@ export class BallSpeedEffect extends AbstractEffect {
   constructor(
     gameManager: GameManager,
     protected ball: Ball,
+    targetPlayer: AbstractEffect["targetPlayer"],
   ) {
-    super(gameManager);
+    super(gameManager, targetPlayer);
 
     this.originalSpeed = ball.speed;
     // Total duration: ramp up + hold + ramp down

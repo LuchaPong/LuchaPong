@@ -11,7 +11,7 @@ export class BallInvisibleEffect extends AbstractEffect {
     gameManager: GameManager,
     protected ball: Ball,
   ) {
-    super(gameManager);
+    super(gameManager, "both");
     this._durationMs = 500; // 0.5 seconds of invisibility
   }
 

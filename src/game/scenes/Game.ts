@@ -41,11 +41,12 @@ export class Game extends Scene {
       }
     | undefined
   > = { left: undefined, right: undefined };
-  activeEffectsUI: ActiveEffectsUI;
+  activeEffectsUILeft: ActiveEffectsUI;
   heartsRowPos: Record<"left" | "right", Phaser.Math.Vector2> = {
     left: new Phaser.Math.Vector2(),
     right: new Phaser.Math.Vector2(),
   };
+  activeEffectsUIRight: ActiveEffectsUI;
   constructor() {
     super("Game");
   }
@@ -166,13 +167,27 @@ export class Game extends Scene {
       physics: this.physics,
     });
 
-    this.activeEffectsUI = new ActiveEffectsUI(
+    this.activeEffectsUILeft = new ActiveEffectsUI(
       this.gameManager,
       this,
-      worldBounds.centerX,
+      worldBounds.centerX - this.cardSize.width,
       worldBounds.bottom -
         this.cardSize.height / 2 +
         this.cardSize.height * 0.25,
+      "right",
+      (effect) =>
+        effect.targetPlayer === "right" || effect.targetPlayer === "both",
+    );
+    this.activeEffectsUIRight = new ActiveEffectsUI(
+      this.gameManager,
+      this,
+      worldBounds.centerX + this.cardSize.width,
+      worldBounds.bottom -
+        this.cardSize.height / 2 +
+        this.cardSize.height * 0.25,
+      "left",
+      (effect) =>
+        effect.targetPlayer === "left" || effect.targetPlayer === "both",
     );
 
     // Initialize sound manager to react to game events
@@ -244,7 +259,8 @@ export class Game extends Scene {
     }
 
     this.gameManager.update(time, delta);
-    this.activeEffectsUI.update(time, delta);
+    this.activeEffectsUILeft.update(time, delta);
+    this.activeEffectsUIRight.update(time, delta);
   }
 
   createPlayerCard(

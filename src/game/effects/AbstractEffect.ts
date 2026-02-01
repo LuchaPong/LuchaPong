@@ -6,11 +6,18 @@ export abstract class AbstractEffect {
 
   abstract get spriteName(): string;
 
+  get targetPlayer() {
+    return this._targetPlayer;
+  }
+
   get durationMs(): number {
     return this._durationMs;
   }
 
-  constructor(gameManager: GameManager) {
+  constructor(
+    gameManager: GameManager,
+    protected _targetPlayer: "left" | "right" | "both",
+  ) {
     this.gameManager = gameManager;
   }
 

@@ -1,3 +1,4 @@
+import type { AbstractEffect } from "../effects/AbstractEffect";
 import type { GameManager } from "../systems/GameManager";
 import { ACTIVE_EFFECT_SIZE, ActiveEffect } from "./ActiveEffect";
 
@@ -11,23 +12,25 @@ export class ActiveEffectsUI extends Phaser.GameObjects.Container {
     scene: Phaser.Scene,
     x: number,
     y: number,
+    protected growthDirection: "left" | "right",
+    protected acceptEffect: (effect: AbstractEffect) => boolean,
   ) {
-    super(scene, x, y);
+    const direction = growthDirection === "right" ? 1 : -1;
+
+    super(scene, x + direction * ACTIVE_EFFECT_SIZE, y);
 
     this.name = "active-effects-container";
 
     scene.add.existing(this);
 
     gameManager.on("effect-applied", (effect) => {
-      console.log("Effect applied:", effect, effect.spriteName);
-
-      if (effect.spriteName === "") {
+      if (effect.spriteName === "" || !this.acceptEffect(effect)) {
         return;
       }
 
       const activeEffect = new ActiveEffect(
         scene,
-        this.activeEffects.length * (ACTIVE_EFFECT_SIZE * 1.5),
+        this.activeEffects.length * (ACTIVE_EFFECT_SIZE * 1.5) * direction,
         ACTIVE_EFFECT_SIZE,
         effect,
       );
@@ -61,7 +64,7 @@ export class ActiveEffectsUI extends Phaser.GameObjects.Container {
 
         scene.tweens.add({
           targets: ae,
-          x: i * (ACTIVE_EFFECT_SIZE * 1.5),
+          x: i * (ACTIVE_EFFECT_SIZE * 1.5) * direction,
           duration: 300,
           ease: "Power2",
         });

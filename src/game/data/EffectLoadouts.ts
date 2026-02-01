@@ -17,7 +17,7 @@ const effectLoadouts: EffectLoadout[] = [
   {
     iconIndex: 0,
     name: "619 / Dizzyness",
-    buffFactory: (gm) => new BallSpeedEffect(gm, gm.ball),
+    buffFactory: (gm) => new BallSpeedEffect(gm, gm.ball, "both"),
     debuffFactory: (gm, player) =>
       new PaddleEffect(gm, 0.75, 0.8, gm.paddles[gm.otherPlayer(player)]),
   },
@@ -38,7 +38,7 @@ const effectLoadouts: EffectLoadout[] = [
   {
     iconIndex: 3,
     name: "Thief / Trash Cans",
-    buffFactory: (gm) => new BallSpeedEffect(gm, gm.ball),
+    buffFactory: (gm) => new BallSpeedEffect(gm, gm.ball, "both"),
     debuffFactory: (gm, player) =>
       new SpawnProjectile(gm, gm.paddles[gm.otherPlayer(player)]),
   },
@@ -59,7 +59,7 @@ const effectLoadouts: EffectLoadout[] = [
   {
     iconIndex: 6,
     name: "Rat / Possession",
-    buffFactory: (gm) => new BallSpeedEffect(gm, gm.ball),
+    buffFactory: (gm) => new BallSpeedEffect(gm, gm.ball, "both"),
     debuffFactory: (gm, player) =>
       new PaddleEffect(gm, 0.85, 0.6, gm.paddles[gm.otherPlayer(player)]),
   },
@@ -114,3 +114,4 @@ export function getDifferentLoadout(
 }
 
 export { effectLoadouts };
+

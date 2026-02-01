@@ -15,7 +15,7 @@ export class PaddleEffect extends AbstractEffect {
     protected speedMultiplier: number,
     protected paddle: Paddle,
   ) {
-    super(gameManager);
+    super(gameManager, paddle.player);
 
     this._durationMs = 8000;
   }

@@ -4,14 +4,14 @@ import { AbstractEffect } from "./AbstractEffect";
 
 export class SpawnProjectile extends AbstractEffect {
   override get spriteName(): string {
-    return "effect/spawn-projectile";
+    return "";
   }
 
   constructor(
     gameManager: GameManager,
     protected paddle: Paddle,
   ) {
-    super(gameManager);
+    super(gameManager, paddle.player === "left" ? "right" : "left");
   }
 
   override apply(): void {
