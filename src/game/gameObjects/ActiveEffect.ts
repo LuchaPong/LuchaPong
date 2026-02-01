@@ -65,7 +65,7 @@ export class ActiveEffect extends Phaser.GameObjects.Container {
     this.add(effectSprite);
 
     const blinkOut = scene.tweens.add({
-      targets: this,
+      targets: effectSprite,
       delay: effect.durationMs - 1000,
       alpha: { from: 1, to: 0.3 },
       duration: 250,
@@ -77,6 +77,28 @@ export class ActiveEffect extends Phaser.GameObjects.Container {
         blinkOut.destroy();
       },
     });
+
+    if (effect.displayName) {
+      const effectText = new Phaser.GameObjects.Text(
+        scene,
+        0,
+        0,
+        effect.displayName,
+        {
+          fontFamily: "Arial",
+          fontSize: "14px",
+          color: "#ffffff",
+          align: "center",
+          stroke: "#000000",
+          strokeThickness: 3,
+        },
+      )
+        .setOrigin(0.5, 0)
+        .setY(ACTIVE_EFFECT_SIZE / 2 + ACTIVE_EFFECT_SIZE * 0.25)
+        .setScrollFactor(0)
+        .setDepth(1);
+      this.add(effectText);
+    }
   }
 
   update(_time: number, _delta: number): void {
