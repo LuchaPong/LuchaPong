@@ -34,21 +34,18 @@ export class GameOver extends Scene {
     );
 
     const winnerLabel =
-      data?.winner === "left"
-        ? "PLAYER 1 WINS!"
-        : data?.winner === "right"
-          ? "PLAYER 2 WINS!"
-          : "";
-
-    if (winnerLabel) {
-      createText(
-        this,
-        winnerLabel,
-        this.scale.width / 2,
-        startY + boxHeight,
-        48,
-      );
-    }
+      data?.winner === "left" ? "PLAYER 1 WINS!" : "PLAYER 2 WINS!";
+    const winnerGlow = data?.winner === "left" ? 0xf54242 : 0x4287f5;
+    this.winnerText = createText(
+      this,
+      winnerLabel,
+      this.scale.width / 2,
+      startY + boxHeight,
+      62,
+      "Rubik Black",
+      9,
+    );
+    this.winnerText.postFX.addGlow(winnerGlow, 4, 0, false, 0.1, 24);
 
     this.restartButton = createInteractiveButton(
       this,
