@@ -13,4 +13,3 @@ export type GameEvents = {
   "effect-applied": [effect: AbstractEffect];
   "effect-removed": [effect: AbstractEffect];
 };
-

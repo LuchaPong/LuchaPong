@@ -4,6 +4,7 @@ import { Ball } from "../gameObjects/Ball";
 import { Bound } from "../gameObjects/Bound";
 import { Paddle } from "../gameObjects/Paddle";
 import { GameManager } from "../systems/GameManager";
+import { SoundManager } from "../systems/SoundManager";
 
 const fontStyle = {
   fontFamily: "Arial",
@@ -23,6 +24,7 @@ export class Game extends Scene {
   background: Phaser.GameObjects.Image;
 
   gameManager: GameManager;
+  soundManager: SoundManager;
   effectsText: Phaser.GameObjects.Text;
   timer: Phaser.Time.TimerEvent;
   timerText: Phaser.GameObjects.Text;
@@ -35,6 +37,8 @@ export class Game extends Scene {
     this.camera = this.cameras.main;
     this.camera.setBackgroundColor(0x1a2332);
     this.camera.zoom = 1;
+
+    this.sound.unlock();
 
     const bounds = this.add.layer([
       new Bound(this, width / 2, -10, width * 2, 20).setName("bound-top"),
@@ -86,6 +90,9 @@ export class Game extends Scene {
       physics: this.physics,
     });
 
+    // Initialize sound manager to react to game events
+    this.soundManager = new SoundManager(this, this.gameManager);
+
     this.gameManager.on("ball-reflect-on-paddle", () => {
       this.camera.shake(150, 0.001);
     });
@@ -97,7 +104,6 @@ export class Game extends Scene {
     this.gameManager.on("game-setup-round", () => {
       console.log("Received 'game-setup-round' event.");
       this.setupNewRound();
-      console.log("Setup for new round complete.");
     });
 
     this.gameManager.on("game-start-round", () => {

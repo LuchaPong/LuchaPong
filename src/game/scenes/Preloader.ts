@@ -23,15 +23,18 @@ export class Preloader extends Scene {
   }
 
   preload() {
-    //  Load the assets for the game - Replace with your own assets
-    this.load.setPath("assets");
+    // Set base path to empty - all assets loaded with their directory prefix
+    this.load.setPath("");
 
-    this.load.image("logo", "logo.png");
-    this.load.image("star", "star.png");
-    this.load.image("ball", "ball.png");
-    this.load.image("paddle", "paddle.png");
-    this.load.spritesheet("button", "button.png", { frameWidth: 511, frameHeight: 135 });
+    // Load image assets
+    this.load.image("logo", "assets/logo.png");
+    this.load.image("star", "assets/star.png");
+    this.load.image("ball", "assets/ball.png");
+    this.load.image("paddle", "assets/paddle.png");
+    this.load.spritesheet("button", "assets/button.png", { frameWidth: 511, frameHeight: 135 });
 
+    // Load sound effects
+    this.load.audio("speedBoost", "audio/speed_boost.mp3");
   }
 
   create() {
