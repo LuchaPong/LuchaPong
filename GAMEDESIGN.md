@@ -16,7 +16,7 @@ O: One time action (e.g. shoot once)
     - Buff: Thief - steals the buff/debuff from the opponent and applies it to yourself, deactivates the opponent's buff/debuff - O/T
     - Debuff: Trash Cans - Spawns 2 trash cans that reflect the ball on contact at the opponent side - O
 - Gas Mask:
-    - Buff: Tear Gas - shoots a gas cloud towards the opponent paddle, if it hits it slows down the paddle movement - O
+    - Buff: Tear Gas - shoots a gas cloud towards the opponent paddle, if it hits it slows down the paddle movement / puts hole into paddle - O
     - Debuff: Add a gas cloud that makes the ball tougher (or impossible) to see - T
 - Knight Helmet:
     - Buff: Sword slash that deflects the ball with faster speed and different angle, needs to happen close to the paddle - O
