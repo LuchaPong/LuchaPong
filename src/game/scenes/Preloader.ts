@@ -38,6 +38,7 @@ export class Preloader extends Scene {
       width: 64,
       height: 64,
     });
+    this.load.image("explosion", "assets/animations/explosion.gif");
 
     this.load.spritesheet("button", "assets/button.png", {
       frameWidth: 511,
@@ -57,4 +58,3 @@ export class Preloader extends Scene {
     this.scene.start("MainMenu");
   }
 }
-

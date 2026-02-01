@@ -21,6 +21,7 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
 
   protected _activeEffects: AbstractEffect[] = [];
   protected lives: Record<"left" | "right", number> = { left: 5, right: 5 };
+  protected explosionDurationMs = 1400;
 
   get activeEffects() {
     return this._activeEffects;
@@ -152,24 +153,31 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
   }
 
   startRound() {
+    this.resetBallVisual();
+    this.ball.body.checkCollision.none = false;
+
     this.ball.setPosition(this.world.bounds.centerX, this.world.bounds.centerY);
     this.ball.setInitialVelocity();
   }
 
   ballLeftPlayArea(scoringPlayer: "left" | "right") {
-    const losingPlayer = scoringPlayer === "left" ? "right" : "left";
+    this.ball.body.checkCollision.none = true;
 
-    this.emit("game-setup-round");
+    this.freezeBall();
+
+    const losingPlayer = scoringPlayer === "left" ? "right" : "left";
 
     this.lives[losingPlayer] = Math.max(0, this.lives[losingPlayer] - 1);
     this.emit("player-lives-updated", losingPlayer, this.lives[losingPlayer]);
 
-    if (this.lives[losingPlayer] <= 0) {
-      this.emit("game-over", scoringPlayer);
-      return;
-    }
-
-    this.emit("ball-scored", scoringPlayer);
+    this.playScoreExplosion(() => {
+      if (this.lives[losingPlayer] <= 0) {
+        this.emit("game-over", scoringPlayer);
+        return;
+      }
+      this.emit("ball-scored", scoringPlayer);
+      this.emit("game-setup-round");
+    });
   }
 
   onBallCollidedWithBound(boundName: string) {
@@ -196,6 +204,52 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     this.lives.right = 5;
     this.emit("player-lives-updated", "left", this.lives.left);
     this.emit("player-lives-updated", "right", this.lives.right);
+  }
+
+  protected freezeBall() {
+    this.ball.body.setVelocity(0, 0);
+    this.ball.setAlpha(0.35);
+  }
+
+  protected resetBallVisual() {
+    this.ball.setAlpha(1);
+  }
+
+  protected playScoreExplosion(onComplete: () => void) {
+    const scene = this.scene;
+    const cam = scene.cameras.main;
+    const { x, y } = this.ball.body.center;
+    const duration = this.explosionDurationMs;
+
+    // ease out of the shake
+    cam.flash(200, 255, 255, 255);
+    cam.shake(this.explosionDurationMs / 3, 0.15);
+    this.scene.time.delayedCall(this.explosionDurationMs / 3, () =>
+      cam.shake(this.explosionDurationMs / 3, 0.09),
+    );
+    this.scene.time.delayedCall((this.explosionDurationMs / 3) * 2, () =>
+      cam.shake(this.explosionDurationMs / 3, 0.04),
+    );
+
+    const boom = scene.add
+      .image(x, y, "explosion")
+      .setDepth(2000)
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .setScale(2.4)
+      .setAlpha(1)
+      .setOrigin(0.5, 0.75);
+
+    scene.tweens.add({
+      targets: boom,
+      scale: 1,
+      alpha: 0,
+      duration,
+      onComplete: () => boom.destroy(),
+    });
+
+    scene.time.delayedCall(duration, () => {
+      onComplete();
+    });
   }
 }
 
