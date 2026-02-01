@@ -41,6 +41,7 @@ export class Preloader extends Scene {
     this.load.image("ball/racoon", "assets/masks/racoon.png");
     this.load.image("ball/vikingHelmet", "assets/masks/viking-helmet.png");
     this.load.image("gasCloud", "assets/gas_cloud.png");
+    this.load.image("virus", "assets/virus.png");
     this.load.spritesheet("paddles", "assets/paddles.png", {
       frameWidth: 1024 / 6,
       frameHeight: 1024 / 3,

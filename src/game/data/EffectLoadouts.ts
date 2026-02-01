@@ -51,7 +51,7 @@ const effectLoadouts: EffectLoadout[] = [
     name: "Virus Attack / Mask Mandate",
     ballTextureKey: "ball/covidMask",
     buffFactory: (gm, player) =>
-      new SpawnProjectile(gm, "gas_cloud", gm.paddles[player]).withDisplayName(
+      new SpawnProjectile(gm, "virus", gm.paddles[player]).withDisplayName(
         "Virus Attack",
       ),
     debuffFactory: (gm) =>

@@ -142,6 +142,10 @@ export class Game extends Scene {
           spriteName: "gasCloud",
           scale: 0.1,
         },
+        virus: {
+          spriteName: "virus",
+          scale: 0.09,
+        },
       },
       bounds,
       scene: this,
