@@ -20,6 +20,7 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
   protected physics: Phaser.Physics.Arcade.ArcadePhysics;
 
   protected _activeEffects: AbstractEffect[] = [];
+  protected lives: Record<"left" | "right", number> = { left: 5, right: 5 };
 
   get activeEffects() {
     return this._activeEffects;
@@ -131,6 +132,8 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     });
     this._activeEffects = [];
 
+    this.resetLives();
+
     this.ball.speed = 0;
     this.ball.setPosition(this.world.bounds.centerX, this.world.bounds.centerY);
     this.ball.setAlpha(1); // Ensure ball is visible
@@ -154,8 +157,19 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
   }
 
   ballLeftPlayArea(scoringPlayer: "left" | "right") {
-    this.eventBus.emit("ball-scored", scoringPlayer);
-    this.eventBus.emit("game-setup-round");
+    const losingPlayer = scoringPlayer === "left" ? "right" : "left";
+
+    this.emit("game-setup-round");
+
+    this.lives[losingPlayer] = Math.max(0, this.lives[losingPlayer] - 1);
+    this.emit("player-lives-updated", losingPlayer, this.lives[losingPlayer]);
+
+    if (this.lives[losingPlayer] <= 0) {
+      this.emit("game-over", scoringPlayer);
+      return;
+    }
+
+    this.emit("ball-scored", scoringPlayer);
   }
 
   onBallCollidedWithBound(boundName: string) {
@@ -175,6 +189,13 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
 
       this.emit("ball-reflect-on-scene-edge", edge, newAngle);
     }
+  }
+
+  protected resetLives() {
+    this.lives.left = 5;
+    this.lives.right = 5;
+    this.emit("player-lives-updated", "left", this.lives.left);
+    this.emit("player-lives-updated", "right", this.lives.right);
   }
 }
 

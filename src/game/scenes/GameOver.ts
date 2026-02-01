@@ -15,9 +15,16 @@ export class GameOver extends Scene {
     this.load.audio("gameover", "audio/game_over.mp3");
   }
 
-  create() {
+  create(data?: { winner?: "left" | "right" }) {
     // Use last frame to render over
     this.add.image(0, 0, "lastGameFrame").setOrigin(0);
+
+    const winnerLabel =
+      data?.winner === "left"
+        ? "PLAYER 1 WINS!"
+        : data?.winner === "right"
+          ? "PLAYER 2 WINS!"
+          : "";
 
     createText(
       this,
@@ -26,6 +33,16 @@ export class GameOver extends Scene {
       this.scale.height * 0.2,
       64,
     );
+
+    if (winnerLabel) {
+      createText(
+        this,
+        winnerLabel,
+        this.scale.width / 2,
+        this.scale.height * 0.32,
+        36,
+      );
+    }
 
     this.restartButton = createInteractiveButton(
       this,
@@ -66,4 +83,3 @@ export class GameOver extends Scene {
     this.scene.start("MainMenu");
   }
 }
-

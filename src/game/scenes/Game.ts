@@ -29,37 +29,80 @@ export class Game extends Scene {
   effectsText: Phaser.GameObjects.Text;
   timer: Phaser.Time.TimerEvent;
   timerText: Phaser.GameObjects.Text;
+
+  cardSize = { width: 450, height: 315 };
+  playerCards: Record<
+    "left" | "right",
+    | {
+        container: Phaser.GameObjects.Container;
+        heartsRow: Phaser.GameObjects.Container;
+      }
+    | undefined
+  > = { left: undefined, right: undefined };
   constructor() {
     super("Game");
   }
 
   create() {
     const { width, height } = this.scale;
+
+    const topPadding = Math.round(Math.min(64, height * 0.2));
+    this.physics.world.setBounds(0, topPadding, width, height - topPadding);
+    const worldBounds = this.physics.world.bounds;
+
     this.camera = this.cameras.main;
-    this.camera.setBackgroundColor(0x1a2332);
-    this.camera.zoom = 1;
+    this.camera.setZoom(0.85);
+    this.camera.setScroll(0, this.scale.height * 0.1);
+    this.camera.setViewport(0, 0, this.scale.width, this.scale.height);
 
     this.sound.unlock();
 
     const bounds = this.add.layer([
-      new Bound(this, width / 2, -10, width * 2, 20).setName("bound-top"),
-      new Bound(this, width / 2, height + 10, width * 2, 20).setName(
-        "bound-bottom",
-      ),
-      new Bound(this, -50, height / 2, 20, height * 2).setName("bound-left"),
-      new Bound(this, width + 50, height / 2, 20, height * 2).setName(
-        "bound-right",
-      ),
+      new Bound(
+        this,
+        worldBounds.centerX,
+        worldBounds.top - 10,
+        worldBounds.width * 2,
+        20,
+      ).setName("bound-top"),
+      new Bound(
+        this,
+        worldBounds.centerX,
+        worldBounds.bottom + 10,
+        worldBounds.width * 2,
+        20,
+      ).setName("bound-bottom"),
+      new Bound(
+        this,
+        worldBounds.left - 50,
+        worldBounds.centerY,
+        20,
+        worldBounds.height * 2,
+      ).setName("bound-left"),
+      new Bound(
+        this,
+        worldBounds.right + 50,
+        worldBounds.centerY,
+        20,
+        worldBounds.height * 2,
+      ).setName("bound-right"),
     ]);
 
     this.add
       .graphics()
       .lineStyle(2, 0xffffff, 1)
-      .strokeCircle(width / 2, height / 2, 100)
-      .strokeLineShape(new Phaser.Geom.Line(width / 2, 0, width / 2, height));
+      .strokeCircle(worldBounds.centerX, worldBounds.centerY, 100)
+      .strokeLineShape(
+        new Phaser.Geom.Line(
+          worldBounds.centerX,
+          worldBounds.top,
+          worldBounds.centerX,
+          worldBounds.bottom,
+        ),
+      );
 
     this.effectsText = this.add
-      .text(10, 10, "Active Effects:")
+      .text(10, worldBounds.top + 10, "Active Effects:")
       .setDepth(1000)
       .setFontSize(16)
       .setFontFamily("Arial Black")
@@ -67,8 +110,25 @@ export class Game extends Scene {
       .setStroke("#000000", 4);
 
     this.timerText = this.add
-      .text(this.scale.width / 2, 40, "3", fontStyle)
+      .text(worldBounds.centerX, worldBounds.top + 8, "3", fontStyle)
       .setOrigin(0.5, 0);
+
+    this.playerCards.left = this.createPlayerCard(
+      worldBounds.left + 12,
+      worldBounds.bottom - this.cardSize.height / 2,
+      "Player 1",
+      "player_red",
+      "left",
+      5,
+    );
+    this.playerCards.right = this.createPlayerCard(
+      worldBounds.right - this.cardSize.width,
+      worldBounds.bottom - this.cardSize.height / 2,
+      "Player 2",
+      "player_blue",
+      "right",
+      5,
+    );
 
     this.gameManager = new GameManager({
       ball: new Ball(this),
@@ -111,6 +171,14 @@ export class Game extends Scene {
       this.gameManager.startRound();
     });
 
+    this.gameManager.on("player-lives-updated", (player, lives) => {
+      this.updatePlayerCardLives(player, lives);
+    });
+
+    this.gameManager.on("game-over", (winner) => {
+      this.changeScene(winner);
+    });
+
     this.gameManager.intialSetupGame();
 
     EventBus.emit("current-scene-ready", this);
@@ -124,12 +192,12 @@ export class Game extends Scene {
     });
   }
 
-  changeScene() {
+  changeScene(winner?: "left" | "right") {
     // TODO(dtbuday): Delay the scene render.
     this.game.renderer.snapshot(
       (image: HTMLImageElement | Phaser.Display.Color) => {
         storeTexture(this, "lastGameFrame", image as HTMLImageElement);
-        this.scene.start("GameOver");
+        this.scene.start("GameOver", { winner });
       },
     );
   }
@@ -154,6 +222,107 @@ export class Game extends Scene {
         .map((e) => `- ${e} (${(e.durationMs / 1000).toFixed(0)}s left)`)
         .join("\n")}`,
     );
+  }
+
+  createPlayerCard(
+    x: number,
+    y: number,
+    label: string,
+    textureKey: string,
+    player: "left" | "right",
+    heartsLeft: number,
+  ) {
+    const totalHearts = 5;
+    const clampedHearts = Phaser.Math.Clamp(heartsLeft, 0, totalHearts);
+
+    const sourceImg = this.textures.get(textureKey).getSourceImage();
+    const targetRatio = this.cardSize.width / this.cardSize.height;
+    const sourceRatio = sourceImg.width / sourceImg.height;
+
+    let cropX = 0;
+    let cropY = 0;
+    let cropW = sourceImg.width;
+    let cropH = sourceImg.height;
+
+    if (targetRatio > sourceRatio) {
+      cropH = sourceImg.width / targetRatio;
+      cropY = (sourceImg.height - cropH) / 2;
+    } else if (targetRatio < sourceRatio) {
+      cropW = sourceImg.height * targetRatio;
+      cropX = (sourceImg.width - cropW) / 2;
+    }
+
+    const cardBg = this.add.image(0, 0, textureKey).setOrigin(0, 0);
+    cardBg.setCrop(cropX, cropY, cropW, cropH);
+    cardBg.setDisplaySize(this.cardSize.width, this.cardSize.height);
+
+    const name = this.add
+      .text(this.cardSize.width * 0.35, this.cardSize.height * 0.35, label, {
+        fontFamily: "Arial Black",
+        fontSize: 22,
+        color: "#ffffff",
+        stroke: "#000000",
+        strokeThickness: 4,
+      })
+      .setOrigin(0, 0);
+
+    const heartsRow = this.createHeartsRow(totalHearts, clampedHearts);
+    const heartsRowWidth =
+      heartsRow.width && heartsRow.width > 0
+        ? heartsRow.width
+        : heartsRow.getBounds().width;
+    heartsRow.setPosition(
+      (this.cardSize.width - heartsRowWidth) / 2,
+      this.cardSize.height * 0.44,
+    );
+
+    const container = this.add
+      .container(x, y, [cardBg, name, heartsRow])
+      .setDepth(950)
+      .setScrollFactor(0);
+
+    this.playerCards[player] = { container, heartsRow };
+
+    return this.playerCards[player]!;
+  }
+
+  protected createHeartsRow(total: number, heartsLeft: number) {
+    const targetHeight = 48;
+    const row = this.add.container(0, 0);
+
+    let cursorX = 0;
+    for (let i = 0; i < total; i++) {
+      const key = i < heartsLeft ? "heart" : "heart_broken";
+      const heart = this.add.image(0, 0, key).setOrigin(0, 0.5);
+
+      const source = this.textures.get(key).getSourceImage();
+      const scale = targetHeight / source.height;
+      heart.setScale(scale);
+
+      heart.setPosition(cursorX, 0);
+      row.add(heart);
+
+      cursorX += heart.displayWidth;
+    }
+
+    row.setSize(Math.max(cursorX, 0), targetHeight);
+
+    return row;
+  }
+
+  protected updatePlayerCardLives(player: "left" | "right", lives: number) {
+    const card = this.playerCards[player];
+    if (!card) return;
+
+    card.heartsRow.destroy();
+    const newRow = this.createHeartsRow(5, lives);
+    const rowWidth =
+      newRow.width && newRow.width > 0
+        ? newRow.width
+        : newRow.getBounds().width;
+    newRow.setPosition(this.cardSize.width * 0.34, this.cardSize.height * 0.52);
+    card.container.add(newRow);
+    this.playerCards[player] = { container: card.container, heartsRow: newRow };
   }
 }
 
