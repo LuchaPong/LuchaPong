@@ -99,9 +99,15 @@ export class ActiveEffect extends Phaser.GameObjects.Container {
         .setDepth(1);
       this.add(effectText);
     }
+
+    this.updateMask();
   }
 
   update(_time: number, _delta: number): void {
+    this.updateMask();
+  }
+
+  updateMask() {
     const { x, y } = this.getWorldPoint();
 
     this.rectMask.clear();

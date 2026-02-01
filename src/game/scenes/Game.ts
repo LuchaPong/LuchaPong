@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import { storeTexture } from "../../utils/Utils";
 import { EventBus } from "../EventBus";
+import { ACTIVE_EFFECT_SIZE } from "../gameObjects/ActiveEffect";
 import { ActiveEffectsUI } from "../gameObjects/ActiveEffectsUI";
 import { Ball } from "../gameObjects/Ball";
 import { Bound } from "../gameObjects/Bound";
@@ -150,7 +151,9 @@ export class Game extends Scene {
     this.activeEffectsUILeft = new ActiveEffectsUI(
       this.gameManager,
       this,
-      worldBounds.centerX - this.cardSize.width,
+      this.playerCards.left.container.x +
+        this.cardSize.width -
+        ACTIVE_EFFECT_SIZE / 2,
       worldBounds.bottom -
         this.cardSize.height / 2 +
         this.cardSize.height * 0.25,
@@ -161,7 +164,7 @@ export class Game extends Scene {
     this.activeEffectsUIRight = new ActiveEffectsUI(
       this.gameManager,
       this,
-      worldBounds.centerX + this.cardSize.width,
+      this.playerCards.right.container.x + ACTIVE_EFFECT_SIZE / 2,
       worldBounds.bottom -
         this.cardSize.height / 2 +
         this.cardSize.height * 0.25,

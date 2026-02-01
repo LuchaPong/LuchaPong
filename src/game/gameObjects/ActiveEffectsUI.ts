@@ -81,6 +81,21 @@ export class ActiveEffectsUI extends Phaser.GameObjects.Container {
         },
       });
     });
+
+    if (scene.physics.config.debug) {
+      const activeEffect = new ActiveEffect(
+        scene,
+        this.activeEffects.length * (ACTIVE_EFFECT_SIZE * 1.5) * direction,
+        ACTIVE_EFFECT_SIZE,
+        {
+          durationMs: 10000,
+          spriteName: "effect/spawn-projectile",
+          displayName: "SPEED UP",
+        } as AbstractEffect,
+      );
+
+      this.add(activeEffect);
+    }
   }
 
   updateActiveEffects() {}
