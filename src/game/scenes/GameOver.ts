@@ -19,6 +19,10 @@ export class GameOver extends Scene {
     // Use last frame to render over
     this.add.image(0, 0, "lastGameFrame").setOrigin(0);
 
+    const boxHeight = 150;
+    const startY = (this.scale.height - 5 * boxHeight) / 2;
+    createText(this, "GAME OVER", this.scale.width / 2, startY, 64);
+
     const winnerLabel =
       data?.winner === "left"
         ? "PLAYER 1 WINS!"
@@ -26,21 +30,13 @@ export class GameOver extends Scene {
           ? "PLAYER 2 WINS!"
           : "";
 
-    createText(
-      this,
-      "GAME OVER",
-      this.scale.width / 2,
-      this.scale.height * 0.2,
-      64,
-    );
-
     if (winnerLabel) {
       createText(
         this,
         winnerLabel,
         this.scale.width / 2,
-        this.scale.height * 0.32,
-        36,
+        startY + boxHeight,
+        48,
       );
     }
 
@@ -48,28 +44,26 @@ export class GameOver extends Scene {
       this,
       "RESTART",
       this.scale.width / 2,
-      this.scale.height / 2,
+      startY + 2 * boxHeight,
       () => {
         this.scene.start("Game");
       },
     );
-    // TODO: This needs a refactor on how the control render works.
-    // this.settingsButton = createInteractiveButton(
-    //   this,
-    //   "SETTINGS",
-    //   this.scale.width / 2,
-    //   this.scale.height / 2 + this.restartButton.height,
-    //   () => {
-    //     this.scene.start("Controls");
-    //   },
-    // );
+    this.settingsButton = createInteractiveButton(
+      this,
+      "SETTINGS",
+      this.scale.width / 2,
+      startY + 3 * boxHeight,
+      () => {
+        // TODO: This needs a refactor on how the control render works.
+        // this.scene.start("Controls");
+      },
+    );
     this.menuButton = createInteractiveButton(
       this,
       "MAIN MENU",
       this.scale.width / 2,
-      // NOTE: If the above TODO is fixed, the following line should replace the height.
-      // this.scale.height / 2 + 2 * this.restartButton.height,
-      this.scale.height / 2 + this.restartButton.height,
+      startY + 4 * boxHeight,
       () => {
         this.scene.start("MainMenu");
       },
@@ -83,3 +77,4 @@ export class GameOver extends Scene {
     this.scene.start("MainMenu");
   }
 }
+
