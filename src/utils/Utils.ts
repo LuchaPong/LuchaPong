@@ -5,8 +5,8 @@ export function createInteractiveButton(
   label: string,
   x: number,
   y: number,
-  fontSize: number = 38,
   fn: Function,
+  fontSize: number = 38,
 ): Phaser.GameObjects.Sprite {
   const btn = context.add.sprite(x, y, "button").setInteractive().setFrame(1);
   createText(context, label, x, y, fontSize);
