@@ -15,6 +15,8 @@ export class Paddle extends Phaser.GameObjects.Container {
   protected DEFAULT_SPEED = 500;
   protected speed: number = this.DEFAULT_SPEED;
 
+  protected _debug = false;
+
   get player() {
     return this._player;
   }
@@ -159,9 +161,12 @@ export class Paddle extends Phaser.GameObjects.Container {
   }
 
   onCollisionWithBall(ball: Ball): void {
+    if (this.player === "left" && ball.x < this.x + this.width / 2) return;
+    if (this.player === "right" && ball.x > this.x - this.width / 2) return;
+
     const currentAngle = Math.atan2(ball.body.velocity.y, ball.body.velocity.x);
 
-    const maxSharpReflectionAngle = Phaser.Math.DegToRad(60);
+    const maxSharpReflectionAngle = Phaser.Math.DegToRad(45);
     const normalAreaHeight = this.height * this.centerSize;
     const edgeAreaHeight = (this.height - normalAreaHeight) / 2;
 
@@ -170,32 +175,80 @@ export class Paddle extends Phaser.GameObjects.Container {
     // adjust the reflection angle based on where the ball hits the paddle
     // central part of the paddle reflects normally, edges reflect at sharper angles
 
-    let newAngle = Math.PI - currentAngle;
-    if (Math.abs(relativeY) >= normalAreaHeight / 2) {
-      const fraction = Phaser.Math.Clamp(
-        (Math.abs(relativeY) - normalAreaHeight / 2) / edgeAreaHeight,
-        0,
-        1,
-      );
+    let fraction = Phaser.Math.Clamp(
+      (Math.abs(relativeY) - normalAreaHeight / 2) / edgeAreaHeight,
+      0,
+      1,
+    );
 
-      let maxAngleAdjustment: number;
+    const normal = new Phaser.Math.Vector2(this.player === "left" ? 1 : -1, 0);
 
-      if (relativeY < 0) {
-        if (this.player === "left") {
-          maxAngleAdjustment = -maxSharpReflectionAngle;
-        } else {
-          maxAngleAdjustment = Math.PI - -maxSharpReflectionAngle;
-        }
+    if (relativeY < 0) {
+      if (this.player === "left") {
+        normal.rotate(fraction * -maxSharpReflectionAngle);
       } else {
-        if (this.player === "left") {
-          maxAngleAdjustment = maxSharpReflectionAngle;
-        } else {
-          maxAngleAdjustment = Math.PI - maxSharpReflectionAngle;
-        }
+        normal.rotate(fraction * maxSharpReflectionAngle);
       }
-
-      newAngle = Phaser.Math.Linear(newAngle, maxAngleAdjustment, fraction);
+    } else {
+      if (this.player === "left") {
+        normal.rotate(fraction * maxSharpReflectionAngle);
+      } else {
+        normal.rotate(fraction * -maxSharpReflectionAngle);
+      }
     }
+    let newDirection = ball.body.velocity.normalize().reflect(normal);
+
+    const newAngle = Math.atan2(newDirection.y, newDirection.x);
+
+    if (this._debug) {
+      const debugLine = this.scene.add
+        .graphics({
+          x: ball.x,
+          y: ball.y,
+          lineStyle: { width: 2, color: 0xff0000 },
+        })
+        .strokeLineShape(
+          new Phaser.Geom.Line(
+            0,
+            0,
+            Math.cos(currentAngle) * -100,
+            Math.sin(currentAngle) * -100,
+          ),
+        )
+        .lineStyle(2, 0x00ff00, 1)
+        .strokeLineShape(
+          new Phaser.Geom.Line(
+            0,
+            0,
+            Math.cos(newAngle) * 100,
+            Math.sin(newAngle) * 100,
+          ),
+        )
+        .lineStyle(2, 0x0000ff, 1)
+        .strokeLineShape(
+          new Phaser.Geom.Line(0, 0, normal.x * 50, normal.y * 50),
+        )
+        .setDepth(1000)
+        .setScrollFactor(0)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setAlpha(0.8)
+        .setDepth(-10);
+
+      this.scene.time.addEvent({
+        delay: 3000,
+        callback: () => {
+          debugLine.destroy();
+        },
+      });
+    }
+
+    this.body.checkCollision.none = true;
+    this.scene.time.addEvent({
+      delay: 500,
+      callback: () => {
+        this.body.checkCollision.none = false;
+      },
+    });
 
     ball.setNewVelocityByAngle(newAngle);
 
