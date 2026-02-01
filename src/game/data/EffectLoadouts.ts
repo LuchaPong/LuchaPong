@@ -9,6 +9,7 @@ import type { GameManager } from "../systems/GameManager";
 export type EffectLoadout = {
   iconIndex: number;
   name: string;
+  ballTextureKey: string;
   buffFactory: (gm: GameManager, player: "left" | "right") => AbstractEffect;
   debuffFactory: (gm: GameManager, player: "left" | "right") => AbstractEffect;
 };
@@ -18,6 +19,7 @@ const effectLoadouts: EffectLoadout[] = [
   {
     iconIndex: 0,
     name: "619 / Dizzyness",
+    ballTextureKey: "ball",
     buffFactory: (gm) =>
       new BallSpeedEffect(gm, gm.ball, "both").withDisplayName("619"),
     debuffFactory: (gm, player) =>
@@ -31,6 +33,7 @@ const effectLoadouts: EffectLoadout[] = [
   {
     iconIndex: 1,
     name: "Inflate / Deflate",
+    ballTextureKey: "ball/blowfish",
     buffFactory: (gm, player) =>
       new PaddleEffect(gm, 1.4, 0.9, gm.paddles[player]).withDisplayName(
         "Inflate",
@@ -46,6 +49,7 @@ const effectLoadouts: EffectLoadout[] = [
   {
     iconIndex: 2,
     name: "Virus Attack / Mask Mandate",
+    ballTextureKey: "ball/covidMask",
     buffFactory: (gm, player) =>
       new SpawnProjectile(gm, gm.paddles[player]).withDisplayName(
         "Virus Attack",
@@ -56,6 +60,7 @@ const effectLoadouts: EffectLoadout[] = [
   {
     iconIndex: 3,
     name: "Thief / Trash Cans",
+    ballTextureKey: "ball/racoon",
     buffFactory: (gm) =>
       new BallSpeedEffect(gm, gm.ball, "both").withDisplayName("Thief"),
     debuffFactory: (gm, player) =>
@@ -67,6 +72,7 @@ const effectLoadouts: EffectLoadout[] = [
   {
     iconIndex: 4,
     name: "Tear Gas / Gas Cloud",
+    ballTextureKey: "ball/gasMask",
     buffFactory: (gm, player) =>
       new SpawnProjectile(gm, gm.paddles[player]).withDisplayName("Tear Gas"),
     debuffFactory: (gm) =>
@@ -75,6 +81,7 @@ const effectLoadouts: EffectLoadout[] = [
   {
     iconIndex: 5,
     name: "Sword Slash / Shield Strike",
+    ballTextureKey: "ball/knightHelmet",
     buffFactory: (gm, player) =>
       new PaddleEffect(gm, 1.2, 1.1, gm.paddles[player]).withDisplayName(
         "Sword Slash",
@@ -90,6 +97,7 @@ const effectLoadouts: EffectLoadout[] = [
   {
     iconIndex: 6,
     name: "Rat / Possession",
+    ballTextureKey: "ball/corvo",
     buffFactory: (gm) =>
       new BallSpeedEffect(gm, gm.ball, "both").withDisplayName("Rat"),
     debuffFactory: (gm, player) =>
@@ -103,6 +111,7 @@ const effectLoadouts: EffectLoadout[] = [
   {
     iconIndex: 7,
     name: "Portals / Fake Paddle",
+    ballTextureKey: "ball/portalWheatley",
     buffFactory: (gm) =>
       new BallInvisibleEffect(gm, gm.ball).withDisplayName("Portals"),
     debuffFactory: (gm, player) =>
@@ -116,6 +125,7 @@ const effectLoadouts: EffectLoadout[] = [
   {
     iconIndex: 8,
     name: "Axe Throw / Battle Cry",
+    ballTextureKey: "ball/vikingHelmet",
     buffFactory: (gm, player) =>
       new SpawnProjectile(gm, gm.paddles[player]).withDisplayName("Axe Throw"),
     debuffFactory: (gm, player) =>
@@ -163,4 +173,3 @@ export function getDifferentLoadout(
 }
 
 export { effectLoadouts };
-

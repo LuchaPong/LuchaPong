@@ -380,4 +380,10 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
       onComplete();
     });
   }
+
+  getBallSkinForPlayer(player: "left" | "right"): string {
+    const loadout = this.currentLoadout[player];
+    console.log(loadout?.ballTextureKey);
+    return loadout?.ballTextureKey ?? "ball";
+  }
 }

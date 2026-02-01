@@ -32,12 +32,20 @@ export class Preloader extends Scene {
     this.load.image("logo", "assets/logo.png");
     this.load.image("star", "assets/star.png");
     this.load.image("ball", "assets/ball.png");
+    this.load.image("ball/blowfish", "assets/masks/blowfish.png");
+    this.load.image("ball/corvo", "assets/masks/corvo.png");
+    this.load.image("ball/covidMask", "assets/masks/covid-mask.png");
+    this.load.image("ball/gasMask", "assets/masks/gas-mask.png");
+    this.load.image("ball/knightHelmet", "assets/masks/knight-helmet.png");
+    this.load.image("ball/portalWheatley", "assets/masks/portal-wheatley.png");
+    this.load.image("ball/racoon", "assets/masks/racoon.png");
+    this.load.image("ball/vikingHelmet", "assets/masks/viking-helmet.png");
+    this.load.image("gasCloud", "assets/gas_cloud.png");
     this.load.spritesheet("paddles", "assets/paddles.png", {
       frameWidth: 1024 / 6,
       frameHeight: 1024 / 3,
       endFrame: 17,
     });
-    this.load.image("gasCloud", "assets/gas_cloud.png");
     this.load.spritesheet("button", "assets/button.png", {
       frameWidth: 511,
       frameHeight: 135,
@@ -84,4 +92,3 @@ export class Preloader extends Scene {
     this.scene.start("MainMenu");
   }
 }
-

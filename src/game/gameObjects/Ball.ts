@@ -12,22 +12,20 @@ export class Ball extends Phaser.GameObjects.Container {
   protected ballSprite: Phaser.GameObjects.Sprite;
   ___debugDirection: Phaser.GameObjects.Graphics;
 
+  protected readonly targetSize = 40;
+
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0);
     scene.physics.add.existing(this);
     scene.add.existing(this);
 
-    this.width = 40;
-    this.height = 40;
+    this.width = this.targetSize;
+    this.height = this.targetSize;
     this.body.setCircle(this.width / 2);
     this.body.setImmovable(true);
 
     this.ballSprite = new Phaser.GameObjects.Sprite(scene, 0, 0, "ball");
-    this.ballSprite.setScale(
-      40 / this.ballSprite.width,
-      40 / this.ballSprite.height,
-    );
-
+    this.applyBallSpriteScale();
     this.add(this.ballSprite);
 
     this.___debugDirection = new Phaser.GameObjects.Graphics(scene);
@@ -108,5 +106,16 @@ export class Ball extends Phaser.GameObjects.Container {
     this.ballSprite.setRotation(newAngle + Math.PI / 2);
     this.___debugDirection.setRotation(newAngle);
   }
-}
 
+  protected applyBallSpriteScale() {
+    this.ballSprite.setScale(
+      this.targetSize / this.ballSprite.width,
+      this.targetSize / this.ballSprite.height,
+    );
+  }
+
+  setSkin(textureKey: string) {
+    this.ballSprite.setTexture(textureKey);
+    this.applyBallSpriteScale();
+  }
+}

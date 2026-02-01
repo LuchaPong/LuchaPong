@@ -173,8 +173,11 @@ export class Game extends Scene {
     // Initialize sound manager to react to game events
     this.soundManager = new SoundManager(this, this.gameManager);
 
-    this.gameManager.on("ball-reflect-on-paddle", () => {
+    this.gameManager.on("ball-reflect-on-paddle", (side) => {
       this.camera.shake(150, 0.001);
+
+      const textureKey = this.gameManager.getBallSkinForPlayer(side);
+      this.gameManager.ball.setSkin(textureKey);
     });
 
     this.gameManager.on("ball-reflect-on-scene-edge", () => {
@@ -402,4 +405,3 @@ export class Game extends Scene {
     };
   }
 }
-
