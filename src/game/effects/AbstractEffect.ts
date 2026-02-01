@@ -4,6 +4,12 @@ export abstract class AbstractEffect {
   protected gameManager: GameManager;
   protected _durationMs: number = 5000;
 
+  displayName: string = "";
+  withDisplayName(name: string): this {
+    this.displayName = name;
+    return this;
+  }
+
   abstract get spriteName(): string;
 
   get targetPlayer() {
@@ -38,3 +44,4 @@ export abstract class AbstractEffect {
     return this === otherEffect;
   }
 }
+
