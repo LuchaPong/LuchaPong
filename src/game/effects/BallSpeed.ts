@@ -118,4 +118,3 @@ export class BallSpeedEffect extends AbstractEffect {
     return `Ball Speed Up (${(currentMultiplier * 100).toFixed(0)}%)`;
   }
 }
-

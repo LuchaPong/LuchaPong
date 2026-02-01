@@ -35,4 +35,3 @@ export class BallInvisibleEffect extends AbstractEffect {
     return "Ball Invisible";
   }
 }
-

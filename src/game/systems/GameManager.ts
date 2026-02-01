@@ -1,8 +1,11 @@
 import { Events } from "phaser";
 import type { TypedEventEmitter } from "../../utils/TypedEventEmitter";
 import type { AbstractEffect } from "../effects/AbstractEffect";
-import { BallSpeedEffect } from "../effects/BallSpeed";
-import { SpawnProjectile } from "../effects/SpawnProjectile";
+import type { EffectLoadout } from "../data/EffectLoadouts";
+import {
+  getDefaultLoadouts,
+  getDifferentLoadout,
+} from "../data/EffectLoadouts";
 import type { Ball } from "../gameObjects/Ball";
 import { Paddle } from "../gameObjects/Paddle";
 import { Projectile } from "../gameObjects/Projectile";
@@ -30,6 +33,10 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
   protected projectiles: Projectile[] = [];
   protected lives: Record<"left" | "right", number> = { left: 5, right: 5 };
   protected explosionDurationMs = 1400;
+  protected currentLoadout: Record<"left" | "right", EffectLoadout | null> = {
+    left: null!,
+    right: null!,
+  };
 
   get activeEffects() {
     return this._activeEffects;
@@ -51,6 +58,10 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     this.ball = params.ball;
     this.paddles = params.paddles;
     this.projectileConfig = params.projectileConfig;
+
+    const defaults = getDefaultLoadouts();
+    this.currentLoadout.left = defaults.left;
+    this.currentLoadout.right = defaults.right;
 
     this.world = params.physics.world;
     this.scene = params.scene;
@@ -96,14 +107,12 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
         return;
       }
 
-      const selfPaddle =
-        player === "left" ? this.paddles.left : this.paddles.right;
+      const loadout = this.currentLoadout[player];
+      if (!loadout) return;
 
-      // const newEffect = skillNumber === 1 ? new PaddleEffect(this, 1.5, 0.75, selfPaddle) : new BallSpeedEffect(this, this.ball);
-      const newEffect =
-        skillNumber === 1
-          ? new SpawnProjectile(this, selfPaddle)
-          : new BallSpeedEffect(this, this.ball);
+      const factory =
+        skillNumber === 1 ? loadout.buffFactory : loadout.debuffFactory;
+      const newEffect = factory(this, player);
 
       if (this._activeEffects.some((e) => e.isExclusiveWith(newEffect))) {
         return;
@@ -176,13 +185,14 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     });
   }
 
-  intialSetupGame() {
+  initialSetupGame() {
     this._activeEffects.forEach((effect) => {
       effect.remove();
     });
     this._activeEffects = [];
 
     this.resetLives();
+    this.rollRoundIcons();
 
     this.ball.speed = 0;
     this.ball.setPosition(this.world.bounds.centerX, this.world.bounds.centerY);
@@ -224,6 +234,7 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
         this.emit("game-over", scoringPlayer);
         return;
       }
+      this.rollRoundIcons();
       this.emit("ball-scored", scoringPlayer);
       this.emit("game-setup-round");
     });
@@ -264,6 +275,22 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     this.ball.setAlpha(1);
   }
 
+  protected rollRoundIcons() {
+    const pickNewLoadout = (player: "left" | "right") => {
+      const prev = this.currentLoadout[player];
+      const chosen = getDifferentLoadout(prev);
+      this.currentLoadout[player] = chosen;
+      this.emit("player-icon-updated", player, chosen.iconIndex);
+    };
+
+    pickNewLoadout("left");
+    pickNewLoadout("right");
+  }
+
+  otherPlayer(player: "left" | "right"): "left" | "right" {
+    return player === "left" ? "right" : "left";
+  }
+
   protected playScoreExplosion(onComplete: () => void) {
     const scene = this.scene;
     const cam = scene.cameras.main;
@@ -272,12 +299,12 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
 
     // ease out of the shake
     cam.flash(200, 255, 255, 255);
-    cam.shake(this.explosionDurationMs / 3, 0.015);
+    cam.shake(this.explosionDurationMs / 3, 0.15);
     this.scene.time.delayedCall(this.explosionDurationMs / 3, () =>
-      cam.shake(this.explosionDurationMs / 3, 0.009),
+      cam.shake(this.explosionDurationMs / 3, 0.09),
     );
     this.scene.time.delayedCall((this.explosionDurationMs / 3) * 2, () =>
-      cam.shake(this.explosionDurationMs / 3, 0.004),
+      cam.shake(this.explosionDurationMs / 3, 0.04),
     );
 
     const boom = scene.add

@@ -52,4 +52,3 @@ export class PaddleEffect extends AbstractEffect {
     return `Paddle Effect (${this.paddle.player})`;
   }
 }
-

@@ -38,6 +38,11 @@ export class Preloader extends Scene {
     });
     this.load.image("player_red", "assets/player/player_red.png");
     this.load.image("player_blue", "assets/player/player_blue.png");
+    this.load.spritesheet("icons", "assets/player/icons.png", {
+      frameWidth: 1024 / 5,
+      frameHeight: 1024 / 5,
+      endFrame: 24,
+    });
     this.load.svg("heart", "assets/heart.svg", { width: 64, height: 64 });
     this.load.svg("heart_broken", "assets/heart_broken.svg", {
       width: 64,

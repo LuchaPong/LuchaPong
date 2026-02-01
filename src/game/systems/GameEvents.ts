@@ -15,6 +15,6 @@ export type GameEvents = {
   "effect-removed": [effect: AbstractEffect];
 
   "player-lives-updated": [player: "left" | "right", lives: number];
+  "player-icon-updated": [player: "left" | "right", iconIndex: number];
   "game-over": [winner: "left" | "right"];
 };
-

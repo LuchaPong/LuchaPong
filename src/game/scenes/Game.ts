@@ -37,10 +37,15 @@ export class Game extends Scene {
     | {
         container: Phaser.GameObjects.Container;
         heartsRow: Phaser.GameObjects.Container;
+        icon?: Phaser.GameObjects.Sprite;
       }
     | undefined
   > = { left: undefined, right: undefined };
   activeEffectsUI: ActiveEffectsUI;
+  heartsRowPos: Record<"left" | "right", Phaser.Math.Vector2> = {
+    left: new Phaser.Math.Vector2(),
+    right: new Phaser.Math.Vector2(),
+  };
   constructor() {
     super("Game");
   }
@@ -53,8 +58,6 @@ export class Game extends Scene {
   }
 
   create() {
-    const bgPadX = 250;
-    const bgPadY = 100;
     const { width, height } = this.scale;
 
     // magic numbers to align bg to game bounds
@@ -124,6 +127,7 @@ export class Game extends Scene {
       "player_red",
       "left",
       5,
+      0,
     );
     this.playerCards.right = this.createPlayerCard(
       worldBounds.right - this.cardSize.width,
@@ -132,6 +136,7 @@ export class Game extends Scene {
       "player_blue",
       "right",
       5,
+      1,
     );
 
     this.gameManager = new GameManager({
@@ -151,10 +156,10 @@ export class Game extends Scene {
         }),
       },
       projectileConfig: {
-        "gas_cloud": {
+        gas_cloud: {
           spriteName: "gasCloud",
-          scale: 0.1
-        }
+          scale: 0.1,
+        },
       },
       bounds,
       scene: this,
@@ -194,11 +199,15 @@ export class Game extends Scene {
       this.updatePlayerCardLives(player, lives);
     });
 
+    this.gameManager.on("player-icon-updated", (player, iconIndex) => {
+      this.updatePlayerCardIcon(player, iconIndex);
+    });
+
     this.gameManager.on("game-over", (winner) => {
       this.changeScene(winner);
     });
 
-    this.gameManager.intialSetupGame();
+    this.gameManager.initialSetupGame();
 
     EventBus.emit("current-scene-ready", this);
   }
@@ -245,6 +254,7 @@ export class Game extends Scene {
     textureKey: string,
     player: "left" | "right",
     heartsLeft: number,
+    iconIndex?: number,
   ) {
     const totalHearts = 5;
     const clampedHearts = Phaser.Math.Clamp(heartsLeft, 0, totalHearts);
@@ -281,21 +291,27 @@ export class Game extends Scene {
       .setOrigin(0, 0);
 
     const heartsRow = this.createHeartsRow(totalHearts, clampedHearts);
-    const heartsRowWidth =
-      heartsRow.width && heartsRow.width > 0
-        ? heartsRow.width
-        : heartsRow.getBounds().width;
-    heartsRow.setPosition(
-      (this.cardSize.width - heartsRowWidth) / 2,
-      this.cardSize.height * 0.44,
-    );
+
+    const defaultHeartsX = this.cardSize.width * 0.335;
+    const defaultHeartsY = this.cardSize.height * 0.5;
+    this.heartsRowPos[player].set(defaultHeartsX, defaultHeartsY);
+    heartsRow.setPosition(defaultHeartsX, defaultHeartsY);
+
+    const parts: Phaser.GameObjects.GameObject[] = [cardBg, name, heartsRow];
+
+    let icon: Phaser.GameObjects.Sprite | undefined;
+    if (iconIndex !== undefined) {
+      icon = this.createIconFromSheet(iconIndex);
+      icon.setPosition(this.cardSize.width * 0.35, this.cardSize.height * 0.47);
+      parts.push(icon);
+    }
 
     const container = this.add
-      .container(x, y, [cardBg, name, heartsRow])
+      .container(x, y, parts)
       .setDepth(950)
       .setScrollFactor(0);
 
-    this.playerCards[player] = { container, heartsRow };
+    this.playerCards[player] = { container, heartsRow, icon };
 
     return this.playerCards[player]!;
   }
@@ -330,10 +346,65 @@ export class Game extends Scene {
 
     card.heartsRow.destroy();
     const newRow = this.createHeartsRow(5, lives);
+    const rowWidth =
+      newRow.width && newRow.width > 0
+        ? newRow.width
+        : newRow.getBounds().width;
+    const storedPos = this.heartsRowPos[player];
+    const targetX =
+      storedPos.x !== 0 || storedPos.y !== 0
+        ? storedPos.x
+        : (this.cardSize.width - rowWidth) / 2;
+    const targetY =
+      storedPos.x !== 0 || storedPos.y !== 0
+        ? storedPos.y
+        : this.cardSize.height * 0.52;
 
-    newRow.setPosition(this.cardSize.width * 0.34, this.cardSize.height * 0.52);
+    newRow.setPosition(targetX, targetY);
     card.container.add(newRow);
-    this.playerCards[player] = { container: card.container, heartsRow: newRow };
+    this.playerCards[player] = {
+      container: card.container,
+      heartsRow: newRow,
+      icon: card.icon,
+    };
+  }
+
+  setHeartsRowPosition(player: "left" | "right", x: number, y: number) {
+    this.heartsRowPos[player].set(x, y);
+    this.playerCards[player]?.heartsRow.setPosition(x, y);
+  }
+
+  protected createIconFromSheet(index: number) {
+    const frameIndex = Phaser.Math.Clamp(index, 0, 24);
+    const icon = this.add.sprite(0, 0, "icons", frameIndex).setOrigin(0.5, 0.5);
+
+    const frame = this.textures.getFrame("icons", frameIndex);
+    const targetHeight = 96;
+    const scale = targetHeight / frame.height;
+    icon.setScale(scale);
+
+    return icon;
+  }
+
+  protected updatePlayerCardIcon(player: "left" | "right", iconIndex: number) {
+    const card = this.playerCards[player];
+    if (!card) return;
+
+    if (card.icon) {
+      card.icon.destroy();
+    }
+
+    const icon = this.createIconFromSheet(iconIndex);
+    icon
+      .setPosition(this.cardSize.width * 0.21, this.cardSize.height * 0.47)
+      .setOrigin(0.5, 0.5);
+
+    card.container.add(icon);
+    this.playerCards[player] = {
+      container: card.container,
+      heartsRow: card.heartsRow,
+      icon,
+    };
   }
 }
 
