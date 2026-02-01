@@ -1,9 +1,12 @@
 Characters / Buff-Debuff Ideas:
 
 - Mexican Wrestler:
-  - Buff: 
-  - Debuff: 
-- Covid Mask
+  - Buff: 619 - rotate your paddle by 180 degrees (on impact with ball, makes it faster and changes direction)
+  - Debuff: Dizzyness - opponent paddle moves slower for a short time
+- Blowfish:
+    - Buff: Inflate - your paddle gets bigger for a short time
+    - Debuff: Deflate - your opponent's paddle gets smaller for a short time
+- Covid Mask:
   - Buff: 
   - Debuff: Add a hole to the paddle that the ball can pass through
 - Racoon:
@@ -11,10 +14,16 @@ Characters / Buff-Debuff Ideas:
   - Debuff: Spawns 2 trash cans that reflect the ball on contact at the opponent side
 - Gas Mask:
     - Buff: 
-    - Debuff: Add a gas cloud that makes the ball tougher to see for a short time
+    - Debuff: Add a gas cloud that makes the ball tougher (or impossible) to see for a short time
 - Knight Helmet:
     - Buff: Sword slash that deflects the ball with faster speed and different angle, needs to happen close to the paddle
     - Debuff: Shield strike - paddle of enemy moves into the other direction for a short time
 - Corvo (Dishonored):
     - Buff: Rat - spawns a rat which moves towards the opponent paddle, if it hits it reflects the ball with increased speed
     - Debuff: Possession - also being able to control the opponent paddle (1.5s interval, 0.5s you control, 1s the opponent remains in control)
+- Portal:
+    - Buff: Portals - create a portal on your side and the opponent side, ball teleports through it
+    - Debuff: The cake is a lie - creates a (2nd) fake paddle on the opponent side that doesn't reflect the ball
+- Viking Helmet:
+    - Buff: Axe Throw - throws an axe that reflects the ball with increased speed
+    - Debuff: Battle Cry - opponent paddle shakes uncontrollably
