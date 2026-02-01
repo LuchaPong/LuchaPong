@@ -85,8 +85,6 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
 
       newEffect.apply();
     });
-
-    this.setupNewRound();
   }
 
   on<K extends keyof GameEvents>(
@@ -128,15 +126,14 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     });
   }
 
-  setupNewRound() {
+  intialSetupGame() {
     this._activeEffects.forEach((effect) => {
       effect.remove();
     });
     this._activeEffects = [];
 
+    this.ball.speed = 0;
     this.ball.setPosition(this.world.bounds.centerX, this.world.bounds.centerY);
-    this.ball.setInitialVelocity();
-
     this.paddles.left.setPosition(50, this.world.bounds.centerY);
     this.paddles.right.setPosition(
       this.world.bounds.centerX +
@@ -144,12 +141,21 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
         this.paddles.left.x,
       this.world.bounds.centerY,
     );
+
+    console.log("Initial game setup done.");
+    console.log("Emitting 'game-setup-round' event.");
+
+    this.emit("game-setup-round");
+  }
+
+  startRound() {
+    this.ball.setPosition(this.world.bounds.centerX, this.world.bounds.centerY);
+    this.ball.setInitialVelocity();
   }
 
   ballLeftPlayArea(scoringPlayer: "left" | "right") {
     this.eventBus.emit("ball-scored", scoringPlayer);
-
-    this.setupNewRound();
+    this.eventBus.emit("game-setup-round");
   }
 
   onBallCollidedWithBound(boundName: string) {

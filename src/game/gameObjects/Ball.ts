@@ -1,10 +1,11 @@
 import type { TypedEventEmitter } from "../../utils/TypedEventEmitter";
 import type { GameEvents } from "../systems/GameEvents";
 
+const START_SPEED = 450;
 export class Ball extends Phaser.GameObjects.Container {
   declare body: Phaser.Physics.Arcade.Body;
 
-  speed = 600;
+  speed = START_SPEED;
 
   eventBus?: TypedEventEmitter<GameEvents>;
 
@@ -36,6 +37,7 @@ export class Ball extends Phaser.GameObjects.Container {
   }
 
   setInitialVelocity() {
+    this.speed = START_SPEED;
     const leftOrRight = Phaser.Math.Between(0, 1) === 0 ? 0 : Math.PI;
     const randomAngle = Phaser.Math.Between(-45, 45) * (Math.PI / 180);
 
@@ -93,6 +95,7 @@ export class Ball extends Phaser.GameObjects.Container {
   }
 
   setNewVelocityByAngle(newAngle: number) {
+    this.speed += 10;
     this.body.setVelocity(
       this.speed * Math.cos(newAngle),
       this.speed * Math.sin(newAngle),

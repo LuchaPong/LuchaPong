@@ -5,13 +5,27 @@ import { Bound } from "../gameObjects/Bound";
 import { Paddle } from "../gameObjects/Paddle";
 import { GameManager } from "../systems/GameManager";
 
+const fontStyle = {
+  fontFamily: "Arial",
+  fontSize: 48,
+  color: "#ffffff",
+  fontStyle: "bold",
+  shadow: {
+    color: "#000000",
+    fill: true,
+    offsetX: 2,
+    offsetY: 2,
+    blur: 4,
+  },
+} as const;
 export class Game extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
   background: Phaser.GameObjects.Image;
 
   gameManager: GameManager;
   effectsText: Phaser.GameObjects.Text;
-
+  timer: Phaser.Time.TimerEvent;
+  timerText: Phaser.GameObjects.Text;
   constructor() {
     super("Game");
   }
@@ -47,6 +61,10 @@ export class Game extends Scene {
       .setColor("#ffffff")
       .setStroke("#000000", 4);
 
+    this.timerText = this.add
+      .text(this.scale.width / 2, 40, "3", fontStyle)
+      .setOrigin(0.5, 0);
+
     this.gameManager = new GameManager({
       ball: new Ball(this),
       paddles: {
@@ -76,7 +94,27 @@ export class Game extends Scene {
       this.camera.shake(150, 0.0025);
     });
 
+    this.gameManager.on("game-setup-round", () => {
+      console.log("Received 'game-setup-round' event.");
+      this.setupNewRound();
+      console.log("Setup for new round complete.");
+    });
+
+    this.gameManager.on("game-start-round", () => {
+      this.gameManager.startRound();
+    });
+
+    this.gameManager.intialSetupGame();
+
     EventBus.emit("current-scene-ready", this);
+  }
+
+  setupNewRound() {
+    this.timer = this.time.addEvent({
+      delay: 3000,
+      callback: () => this.gameManager.emit("game-start-round"),
+      callbackScope: this,
+    });
   }
 
   changeScene() {
@@ -84,6 +122,18 @@ export class Game extends Scene {
   }
 
   update(time: number, delta: number): void {
+    if (this.timer) {
+      if (this.timer.getProgress() === 1) {
+        this.timerText.setText("");
+      } else {
+        const remaining = Math.ceil(3 - this.timer.getElapsedSeconds()).toFixed(
+          0,
+        );
+
+        this.timerText.setText(remaining);
+      }
+    }
+
     this.gameManager.update(time, delta);
 
     this.effectsText.setText(
@@ -93,3 +143,4 @@ export class Game extends Scene {
     );
   }
 }
+
