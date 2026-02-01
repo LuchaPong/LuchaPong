@@ -10,6 +10,10 @@ export class GameOver extends Scene {
     super("GameOver");
   }
 
+  preload() {
+    this.load.audio("gameover", "audio/game_over.mp3");
+  }
+
   create() {
     this.camera = this.cameras.main;
     this.camera.setBackgroundColor(0xff0000);
@@ -29,6 +33,7 @@ export class GameOver extends Scene {
       .setOrigin(0.5)
       .setDepth(100);
 
+    this.sound.play("gameover", { rate: 0.85 });
     EventBus.emit("current-scene-ready", this);
   }
 
@@ -36,3 +41,4 @@ export class GameOver extends Scene {
     this.scene.start("MainMenu");
   }
 }
+
