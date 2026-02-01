@@ -15,9 +15,10 @@ function App() {
 
   return (
     <div id="app">
-      <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />s
+      <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
     </div>
   );
 }
 
 export default App;
+

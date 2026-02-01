@@ -327,10 +327,7 @@ export class Game extends Scene {
 
     card.heartsRow.destroy();
     const newRow = this.createHeartsRow(5, lives);
-    const rowWidth =
-      newRow.width && newRow.width > 0
-        ? newRow.width
-        : newRow.getBounds().width;
+
     newRow.setPosition(this.cardSize.width * 0.34, this.cardSize.height * 0.52);
     card.container.add(newRow);
     this.playerCards[player] = { container: card.container, heartsRow: newRow };
