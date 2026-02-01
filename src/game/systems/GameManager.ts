@@ -86,6 +86,16 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     });
 
     this.on("paddle-skill-used", (player, skillNumber) => {
+      if (
+        this.ball.speed === 0 ||
+        this.ball.body.checkCollision.none ||
+        this.lives.left <= 0 ||
+        this.lives.right <= 0
+      ) {
+        // do not activate skills if game is not running
+        return;
+      }
+
       const selfPaddle =
         player === "left" ? this.paddles.left : this.paddles.right;
 
@@ -291,3 +301,4 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     });
   }
 }
+
