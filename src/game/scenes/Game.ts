@@ -124,7 +124,13 @@ export class Game extends Scene {
   }
 
   changeScene() {
-    this.scene.start("GameOver");
+    // TODO(dtbuday): Delay the scene render.
+    this.game.renderer.snapshot(
+      (image: HTMLImageElement | Phaser.Display.Color) => {
+        this.textures.addImage("lastGameFrame", image as HTMLImageElement);
+        this.scene.start("GameOver");
+      },
+    );
   }
 
   update(time: number, delta: number): void {
