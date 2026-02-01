@@ -43,3 +43,15 @@ export function createText(
     .setOrigin(0.5, 0.7);
 }
 
+export function storeTexture(
+  context: Scene,
+  label: string,
+  image: HTMLImageElement,
+) {
+  // Check if the texture already exists and remove it to allow the update
+  if (context.textures.exists(label)) {
+    context.textures.remove(label);
+  }
+  context.textures.addImage(label, image);
+}
+

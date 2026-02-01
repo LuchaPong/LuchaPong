@@ -5,6 +5,7 @@ import { Bound } from "../gameObjects/Bound";
 import { Paddle } from "../gameObjects/Paddle";
 import { GameManager } from "../systems/GameManager";
 import { SoundManager } from "../systems/SoundManager";
+import { storeTexture } from "../../utils/Utils";
 
 const fontStyle = {
   fontFamily: "Arial",
@@ -127,11 +128,7 @@ export class Game extends Scene {
     // TODO(dtbuday): Delay the scene render.
     this.game.renderer.snapshot(
       (image: HTMLImageElement | Phaser.Display.Color) => {
-        // Check if the texture already exists and remove it to allow the update
-        if (this.textures.exists("lastGameFrame")) {
-          this.textures.remove("lastGameFrame");
-        }
-        this.textures.addImage("lastGameFrame", image as HTMLImageElement);
+        storeTexture(this, "lastGameFrame", image as HTMLImageElement);
         this.scene.start("GameOver");
       },
     );
