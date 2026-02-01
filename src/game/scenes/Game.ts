@@ -1,11 +1,11 @@
 import { Scene } from "phaser";
+import { storeTexture } from "../../utils/Utils";
 import { EventBus } from "../EventBus";
 import { Ball } from "../gameObjects/Ball";
 import { Bound } from "../gameObjects/Bound";
 import { Paddle } from "../gameObjects/Paddle";
 import { GameManager } from "../systems/GameManager";
 import { SoundManager } from "../systems/SoundManager";
-import { storeTexture } from "../../utils/Utils";
 
 const fontStyle = {
   fontFamily: "Arial",
@@ -43,12 +43,30 @@ export class Game extends Scene {
     super("Game");
   }
 
+  preload() {
+    //  The Boot Scene is typically used to load in any assets you require for your Preloader, such as a game logo or background.
+    //  The smaller the file size of the assets, the better, as the Boot Scene itself has no preloader.
+
+    this.load.image("background", "assets/background.png");
+  }
+
   create() {
     const { width, height } = this.scale;
 
     const topPadding = Math.round(Math.min(64, height * 0.2));
     this.physics.world.setBounds(0, topPadding, width, height - topPadding);
     const worldBounds = this.physics.world.bounds;
+
+    this.background = this.add
+      .image(worldBounds.centerX, worldBounds.centerY, "background")
+      .setDepth(-1000);
+
+    const bgPadX = 150;
+    const bgPadY = 100;
+    this.background.setDisplaySize(
+      worldBounds.width + bgPadX * 2,
+      worldBounds.height + bgPadY * 2,
+    );
 
     this.camera = this.cameras.main;
     this.camera.setZoom(0.85);
@@ -87,19 +105,6 @@ export class Game extends Scene {
         worldBounds.height * 2,
       ).setName("bound-right"),
     ]);
-
-    this.add
-      .graphics()
-      .lineStyle(2, 0xffffff, 1)
-      .strokeCircle(worldBounds.centerX, worldBounds.centerY, 100)
-      .strokeLineShape(
-        new Phaser.Geom.Line(
-          worldBounds.centerX,
-          worldBounds.top,
-          worldBounds.centerX,
-          worldBounds.bottom,
-        ),
-      );
 
     this.effectsText = this.add
       .text(10, worldBounds.top + 10, "Active Effects:")
@@ -325,4 +330,3 @@ export class Game extends Scene {
     this.playerCards[player] = { container: card.container, heartsRow: newRow };
   }
 }
-
