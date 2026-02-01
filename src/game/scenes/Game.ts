@@ -59,9 +59,9 @@ export class Game extends Scene {
     const topPadding = height * 0.1;
     this.physics.world.setBounds(
       0,
-      topPadding * 1.21,
+      topPadding * 1.25,
       width,
-      height - topPadding * 1.65,
+      height - topPadding * 2,
     );
     const worldBounds = this.physics.world.bounds;
 
@@ -69,10 +69,9 @@ export class Game extends Scene {
       .image(width / 2, (height + topPadding) / 2, "background")
       .setDepth(-1000);
 
-    this.background.setDisplaySize(
-      worldBounds.width + bgPadX * 2,
-      worldBounds.height + bgPadY * 2,
-    );
+    this.background
+      .setDisplaySize(worldBounds.width * 1.2, worldBounds.height * 1.21)
+      .setY(worldBounds.centerY * 1.02);
 
     this.camera = this.cameras.main;
     this.camera.setZoom(0.85);
