@@ -13,7 +13,7 @@ const config: Phaser.Types.Core.GameConfig = {
   width: "100%",
   height: "100%",
   parent: "game-container",
-  backgroundColor: "#028af8",
+  backgroundColor: "#000000",
   scene: [Boot, Preloader, MainMenu, MainGame, Controls, GameOver],
   physics: {
     default: "arcade",
@@ -29,3 +29,4 @@ const StartGame = (parent: string) => {
 };
 
 export default StartGame;
+
