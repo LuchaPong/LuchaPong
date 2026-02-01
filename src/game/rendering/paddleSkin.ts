@@ -1,4 +1,7 @@
+import { COLORS } from "../constants";
+
 export type PaddleSkinOptions = {
+  player: "left" | "right";
   width: number;
   height: number;
   centerSize: number;
@@ -9,7 +12,7 @@ export function createWoodenPaddleSkin(
   scene: Phaser.Scene,
   opts: PaddleSkinOptions,
 ): Phaser.GameObjects.Graphics {
-  const { width: w, height: h, centerSize, playerColor } = opts;
+  const { player, width: w, height: h, centerSize } = opts;
 
   const g = new Phaser.GameObjects.Graphics(scene);
   g.setName("paddle-wood-layer");
@@ -44,6 +47,7 @@ export function createWoodenPaddleSkin(
     g.strokePath();
   }
 
+  const playerColor = player === "left" ? COLORS.playerRed : COLORS.playerBlue;
   const centerH = h * centerSize;
   g.fillStyle(playerColor, 0.9);
   g.fillRoundedRect(x0 + 2, -centerH / 2, w - 4, centerH, 5);

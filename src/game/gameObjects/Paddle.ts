@@ -54,13 +54,11 @@ export class Paddle extends Phaser.GameObjects.Container {
     this.paddleSprite.setAlpha(0.25);
     this.add(this.paddleSprite);
 
-    const playerColor = _player === "left" ? 0x3498db : 0xe74c3c;
-
     const woodLayer = createWoodenPaddleSkin(scene, {
+      player: _player,
       width: this.width,
       height: this.height,
       centerSize: this.centerSize,
-      playerColor,
     });
     this.add(woodLayer);
 
