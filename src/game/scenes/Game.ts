@@ -280,20 +280,30 @@ export class Game extends Scene {
     const cardBg = this.add.image(0, 0, textureKey).setOrigin(0, 0);
     cardBg.setCrop(cropX, cropY, cropW, cropH);
     cardBg.setDisplaySize(this.cardSize.width, this.cardSize.height);
+    if (player === "right") {
+      cardBg.setFlipX(true);
+    }
 
     const name = this.add
-      .text(this.cardSize.width * 0.35, this.cardSize.height * 0.35, label, {
-        fontFamily: "Arial Black",
-        fontSize: 22,
-        color: "#ffffff",
-        stroke: "#000000",
-        strokeThickness: 4,
-      })
+      .text(
+        this.cardSize.width * 0.35 +
+          (player === "right" ? this.cardSize.width * 0.09 : 0),
+        this.cardSize.height * 0.35,
+        label,
+        {
+          fontFamily: "Arial Black",
+          fontSize: 22,
+          color: "#ffffff",
+          stroke: "#000000",
+          strokeThickness: 4,
+        },
+      )
       .setOrigin(0, 0);
 
     const heartsRow = this.createHeartsRow(totalHearts, clampedHearts);
 
-    const defaultHeartsX = this.cardSize.width * 0.335;
+    const defaultHeartsX =
+      this.cardSize.width * (player === "left" ? 0.335 : 0.15);
     const defaultHeartsY = this.cardSize.height * 0.5;
     this.heartsRowPos[player].set(defaultHeartsX, defaultHeartsY);
     heartsRow.setPosition(defaultHeartsX, defaultHeartsY);
@@ -397,7 +407,10 @@ export class Game extends Scene {
 
     const icon = this.createIconFromSheet(iconIndex);
     icon
-      .setPosition(this.cardSize.width * 0.21, this.cardSize.height * 0.47)
+      .setPosition(
+        this.cardSize.width * (player === "left" ? 0.21 : 0.79),
+        this.cardSize.height * 0.47,
+      )
       .setOrigin(0.5, 0.5);
 
     card.container.add(icon);
@@ -408,3 +421,4 @@ export class Game extends Scene {
     };
   }
 }
+
