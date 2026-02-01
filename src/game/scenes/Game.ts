@@ -51,15 +51,17 @@ export class Game extends Scene {
   }
 
   create() {
+    const bgPadX = 250;
+    const bgPadY = 100;
     const { width, height } = this.scale;
 
     // magic numbers to align bg to game bounds
     const topPadding = height * 0.1;
     this.physics.world.setBounds(
       0,
-      topPadding + 12,
+      topPadding * 1.21,
       width,
-      height - topPadding - 50,
+      height - topPadding * 1.65,
     );
     const worldBounds = this.physics.world.bounds;
 
@@ -67,8 +69,6 @@ export class Game extends Scene {
       .image(width / 2, (height + topPadding) / 2, "background")
       .setDepth(-1000);
 
-    const bgPadX = 150;
-    const bgPadY = 100;
     this.background.setDisplaySize(
       worldBounds.width + bgPadX * 2,
       worldBounds.height + bgPadY * 2,
