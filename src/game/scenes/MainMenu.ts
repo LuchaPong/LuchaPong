@@ -1,8 +1,8 @@
 import { GameObjects, Scene } from "phaser";
 
 import { EventBus } from "../EventBus";
-
 import { createInteractiveButton } from "../../utils/Utils";
+import { setupBackground } from "../utils/setupBackground";
 
 export class MainMenu extends Scene {
   background: GameObjects.Image;
@@ -20,8 +20,7 @@ export class MainMenu extends Scene {
     const width = this.scale.width;
     const height = this.scale.height;
 
-    this.background = this.add.image(width / 2, height / 2, "background");
-    this.background.setDisplaySize(width, height);
+    setupBackground(this);
 
     this.logo = this.add.image(width / 2, height * 0.2, "logo").setDepth(100);
     this.logo.setDisplaySize(width * 0.4, height * 0.4);

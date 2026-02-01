@@ -7,6 +7,7 @@ import { Bound } from "../gameObjects/Bound";
 import { Paddle } from "../gameObjects/Paddle";
 import { GameManager } from "../systems/GameManager";
 import { SoundManager } from "../systems/SoundManager";
+import { setupBackground } from "../utils/setupBackground";
 
 export const fontStyle = {
   fontFamily: "Arial",
@@ -59,30 +60,9 @@ export class Game extends Scene {
   }
 
   create() {
-    const { width, height } = this.scale;
-
-    // magic numbers to align bg to game bounds
-    const topPadding = height * 0.1;
-    this.physics.world.setBounds(
-      0,
-      topPadding * 1.25,
-      width,
-      height - topPadding * 2,
-    );
-    const worldBounds = this.physics.world.bounds;
-
-    this.background = this.add
-      .image(width / 2, (height + topPadding) / 2, "background")
-      .setDepth(-1000);
-
-    this.background
-      .setDisplaySize(worldBounds.width * 1.2, worldBounds.height * 1.21)
-      .setY(worldBounds.centerY * 1.02);
-
-    this.camera = this.cameras.main;
-    this.camera.setZoom(0.85);
-    this.camera.setScroll(0, this.scale.height * 0.1);
-    this.camera.setViewport(0, 0, this.scale.width, this.scale.height);
+    const { worldBounds, background, camera } = setupBackground(this);
+    this.background = background;
+    this.camera = camera;
 
     this.sound.unlock();
 
