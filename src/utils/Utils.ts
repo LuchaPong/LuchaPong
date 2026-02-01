@@ -20,7 +20,14 @@ export function createInteractiveButton(
     btn.setFrame(1);
   });
 
-  btn.on("pointerup", fn);
+  btn.on("pointerup", () => {
+    fn();
+    context.sound.play("buttonSelect", {
+      volume: 0.5,
+      detune: -1200,
+      rate: 1.5,
+    });
+  });
 
   return btn;
 }

@@ -85,6 +85,7 @@ export class Preloader extends Scene {
     this.load.audio("ballReflect", "audio/ball_reflect.mp3");
     this.load.audio("gameOver", "audio/game_over.mp3");
     this.load.audio("buttonSnap", "audio/button_snap.mp3");
+    this.load.audio("buttonSelect", "audio/button_select.mp3");
   }
 
   create() {
@@ -94,3 +95,4 @@ export class Preloader extends Scene {
     this.scene.start("MainMenu");
   }
 }
+
