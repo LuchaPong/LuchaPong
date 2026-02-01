@@ -58,12 +58,11 @@ export class GameOver extends Scene {
     );
     this.settingsButton = createInteractiveButton(
       this,
-      "SETTINGS",
+      "CONTROLS",
       this.scale.width / 2,
       startY + 3 * boxHeight,
       () => {
-        // TODO: This needs a refactor on how the control render works.
-        // this.scene.start("Controls");
+        this.scene.start("Controls");
       },
     );
     this.menuButton = createInteractiveButton(

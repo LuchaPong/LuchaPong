@@ -236,7 +236,6 @@ export class Game extends Scene {
   }
 
   changeScene(winner?: "left" | "right") {
-    // TODO(dtbuday): Delay the scene render.
     this.game.renderer.snapshot(
       (image: HTMLImageElement | Phaser.Display.Color) => {
         storeTexture(this, "lastGameFrame", image as HTMLImageElement);
