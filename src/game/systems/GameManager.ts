@@ -133,6 +133,7 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
 
     this.ball.speed = 0;
     this.ball.setPosition(this.world.bounds.centerX, this.world.bounds.centerY);
+    this.ball.setAlpha(1); // Ensure ball is visible
     this.paddles.left.setPosition(50, this.world.bounds.centerY);
     this.paddles.right.setPosition(
       this.world.bounds.centerX +
