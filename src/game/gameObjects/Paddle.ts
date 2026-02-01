@@ -44,6 +44,7 @@ export class Paddle extends Phaser.GameObjects.Container {
 
     this.body.setSize(this.width, this.height);
     this.body.setImmovable(true);
+    this.body.setCollideWorldBounds(true);
 
     this.paddleSprite = new Phaser.GameObjects.Sprite(scene, 0, 0, "paddle");
     this.paddleSprite.setScale(
