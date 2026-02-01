@@ -53,12 +53,18 @@ export class Game extends Scene {
   create() {
     const { width, height } = this.scale;
 
-    const topPadding = Math.round(Math.min(64, height * 0.2));
-    this.physics.world.setBounds(0, topPadding, width, height - topPadding);
+    // magic numbers to align bg to game bounds
+    const topPadding = height * 0.1;
+    this.physics.world.setBounds(
+      0,
+      topPadding + 12,
+      width,
+      height - topPadding - 50,
+    );
     const worldBounds = this.physics.world.bounds;
 
     this.background = this.add
-      .image(worldBounds.centerX, worldBounds.centerY, "background")
+      .image(width / 2, (height + topPadding) / 2, "background")
       .setDepth(-1000);
 
     const bgPadX = 150;
@@ -330,3 +336,4 @@ export class Game extends Scene {
     this.playerCards[player] = { container: card.container, heartsRow: newRow };
   }
 }
+
