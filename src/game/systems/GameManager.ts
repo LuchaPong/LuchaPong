@@ -10,6 +10,7 @@ import type { Ball } from "../gameObjects/Ball";
 import { Paddle } from "../gameObjects/Paddle";
 import { Projectile } from "../gameObjects/Projectile";
 import type { GameEvents } from "./GameEvents";
+import { PaddleEffect } from "../effects/PaddleSize";
 
 export class GameManager implements TypedEventEmitter<GameEvents> {
   protected eventBus = new Events.EventEmitter();
@@ -131,15 +132,30 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
         initialPosition: { x: number; y: number },
         velocity: { x: number; y: number },
       ) => {
-        this.projectiles.push(
-          new Projectile(
-            this.scene,
-            this.projectileConfig[key].spriteName,
-            this.projectileConfig[key].scale,
-            initialPosition,
-            velocity,
-          ),
+        const projectile = new Projectile(
+          this.scene,
+          this.projectileConfig[key].spriteName,
+          this.projectileConfig[key].scale,
+          initialPosition,
+          velocity,
         );
+        this.physics.add.overlap(
+          projectile,
+          this.paddles.left,
+          undefined,
+          () =>
+            this.onPaddleCollidedWithProjectile(this.paddles.left, projectile),
+          true,
+        );
+        this.physics.add.overlap(
+          projectile,
+          this.paddles.right,
+          undefined,
+          () =>
+            this.onPaddleCollidedWithProjectile(this.paddles.right, projectile),
+          true,
+        );
+        this.projectiles.push(projectile);
       },
     );
   }
@@ -244,6 +260,24 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
       this.emit("ball-scored", scoringPlayer);
       this.emit("game-setup-round");
     });
+  }
+
+  onPaddleCollidedWithProjectile(paddle: Paddle, projectile: Projectile) {
+    // ignore collision with the intitial shooter
+    if (
+      Math.abs(paddle.x - projectile.initialPosition.x) < 10 &&
+      Math.abs(paddle.y - projectile.initialPosition.y) < 10
+    ) {
+      return;
+    }
+    const newEffect = new PaddleEffect(this, 1, 0.7, paddle).withDisplayName(
+      "Slowdown",
+    );
+
+    this._activeEffects.push(newEffect);
+
+    newEffect.apply();
+    projectile.body.checkCollision.none = true;
   }
 
   onBallCollidedWithBound(boundName: string) {

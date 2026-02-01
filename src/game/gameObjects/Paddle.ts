@@ -1,6 +1,7 @@
 import type { TypedEventEmitter } from "../../utils/TypedEventEmitter";
 import type { GameEvents } from "../systems/GameEvents";
 import type { Ball } from "./Ball";
+import { Projectile } from "./Projectile";
 
 export class Paddle extends Phaser.GameObjects.Container {
   declare body: Phaser.Physics.Arcade.Body;

@@ -11,13 +11,12 @@ export class Projectile extends Phaser.GameObjects.Container {
     scene: Phaser.Scene,
     spriteName: string,
     scale: number,
-    initialPosition: { x: number; y: number },
-    velocity: { x: number; y: number },
+    public initialPosition: { x: number; y: number },
+    public velocity: { x: number; y: number },
   ) {
     super(scene, 0, 0);
     scene.physics.add.existing(this);
     scene.add.existing(this);
-
     this.projectileSprite = new Phaser.GameObjects.Sprite(
       scene,
       0,
@@ -26,8 +25,8 @@ export class Projectile extends Phaser.GameObjects.Container {
     );
     this.add(this.projectileSprite);
     this.setScale(scale);
-    this.setPosition(initialPosition.x, initialPosition.y);
-    this.body.setVelocity(velocity.x, velocity.y);
+    this.setPosition(this.initialPosition.x, this.initialPosition.y);
+    this.body.setVelocity(this.velocity.x, this.velocity.y);
     this.body.position.add(
       new Phaser.Math.Vector2(this.body.velocity).normalize().scale(4),
     );
