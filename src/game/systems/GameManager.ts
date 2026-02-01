@@ -198,7 +198,7 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     effectsToRemove.forEach((index) => {
       const effect = this._activeEffects.splice(index, 1);
 
-      effect[0].remove();
+      effect[0]?.remove();
     });
   }
 
@@ -386,3 +386,4 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     return loadout?.ballTextureKey ?? "ball";
   }
 }
+
