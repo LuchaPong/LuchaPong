@@ -6,11 +6,11 @@ import {
   getDifferentLoadout,
 } from "../data/EffectLoadouts";
 import type { AbstractEffect } from "../effects/AbstractEffect";
+import { PaddleEffect } from "../effects/PaddleSize";
 import type { Ball } from "../gameObjects/Ball";
 import { Paddle } from "../gameObjects/Paddle";
 import { Projectile } from "../gameObjects/Projectile";
 import type { GameEvents } from "./GameEvents";
-import { PaddleEffect } from "../effects/PaddleSize";
 
 export class GameManager implements TypedEventEmitter<GameEvents> {
   protected eventBus = new Events.EventEmitter();
@@ -383,7 +383,6 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
 
   getBallSkinForPlayer(player: "left" | "right"): string {
     const loadout = this.currentLoadout[player];
-    console.log(loadout?.ballTextureKey);
     return loadout?.ballTextureKey ?? "ball";
   }
 }
