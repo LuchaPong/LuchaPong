@@ -156,6 +156,12 @@ export class Game extends Scene {
           skill2: this.input.keyboard!.addKey("O"),
         }),
       },
+      projectileConfig: {
+        "gas_cloud": {
+          spriteName: "gasCloud",
+          scale: 0.1
+        }
+      },
       bounds,
       scene: this,
       physics: this.physics,
