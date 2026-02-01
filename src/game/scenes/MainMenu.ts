@@ -22,7 +22,8 @@ export class MainMenu extends Scene {
 		this.background = this.add.image(width / 2, height / 2, "background");
 		this.background.setDisplaySize(width, height);
 
-		this.logo = this.add.image(width / 2, height * 0.1, "logo").setDepth(100);
+		this.logo = this.add.image(width / 2, height * 0.2, "logo").setDepth(100);
+		this.logo.setDisplaySize(width * 0.4, height * 0.4)
 		
     this.startBtn = createInteractiveButton(this, "START", width / 2, height / 2, () => {
 			this.scene.start("Game");
