@@ -33,6 +33,9 @@ export class Ball extends Phaser.GameObjects.Container {
     this.___debugDirection = new Phaser.GameObjects.Graphics(scene);
     this.___debugDirection.lineStyle(2, 0x0000ff, 1);
     this.___debugDirection.strokeLineShape(new Phaser.Geom.Line(0, 0, 4000, 0));
+    if (!scene.physics.config.debug) {
+      this.___debugDirection.setAlpha(0);
+    }
     this.add(this.___debugDirection);
   }
 
