@@ -51,7 +51,7 @@ const effectLoadouts: EffectLoadout[] = [
     name: "Virus Attack / Mask Mandate",
     ballTextureKey: "ball/covidMask",
     buffFactory: (gm, player) =>
-      new SpawnProjectile(gm, gm.paddles[player]).withDisplayName(
+      new SpawnProjectile(gm, "gas_cloud", gm.paddles[player]).withDisplayName(
         "Virus Attack",
       ),
     debuffFactory: (gm) =>
@@ -66,6 +66,7 @@ const effectLoadouts: EffectLoadout[] = [
     debuffFactory: (gm, player) =>
       new SpawnProjectile(
         gm,
+        "gas_cloud",
         gm.paddles[gm.otherPlayer(player)],
       ).withDisplayName("Trash Cans"),
   },
@@ -74,7 +75,9 @@ const effectLoadouts: EffectLoadout[] = [
     name: "Tear Gas / Gas Cloud",
     ballTextureKey: "ball/gasMask",
     buffFactory: (gm, player) =>
-      new SpawnProjectile(gm, gm.paddles[player]).withDisplayName("Tear Gas"),
+      new SpawnProjectile(gm, "gas_cloud", gm.paddles[player]).withDisplayName(
+        "Tear Gas",
+      ),
     debuffFactory: (gm) =>
       new BallInvisibleEffect(gm, gm.ball).withDisplayName("Gas Cloud"),
   },
@@ -127,7 +130,9 @@ const effectLoadouts: EffectLoadout[] = [
     name: "Axe Throw / Battle Cry",
     ballTextureKey: "ball/vikingHelmet",
     buffFactory: (gm, player) =>
-      new SpawnProjectile(gm, gm.paddles[player]).withDisplayName("Axe Throw"),
+      new SpawnProjectile(gm, "gas_cloud", gm.paddles[player]).withDisplayName(
+        "Axe Throw",
+      ),
     debuffFactory: (gm, player) =>
       new PaddleEffect(
         gm,

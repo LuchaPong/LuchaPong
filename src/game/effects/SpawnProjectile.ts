@@ -9,6 +9,7 @@ export class SpawnProjectile extends AbstractEffect {
 
   constructor(
     gameManager: GameManager,
+    protected projectileKey: string,
     protected paddle: Paddle,
   ) {
     super(gameManager, paddle.player === "left" ? "right" : "left");
@@ -21,7 +22,7 @@ export class SpawnProjectile extends AbstractEffect {
       this.paddle.name == "left-paddle" ? { x: 450, y: 0 } : { x: -450, y: 0 };
     this.gameManager.emit(
       "spawn-projectile",
-      "gas_cloud",
+      this.projectileKey,
       initialPosition,
       velocity,
     );
