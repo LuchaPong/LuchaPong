@@ -35,6 +35,7 @@ export class Preloader extends Scene {
 
     // Load sound effects
     this.load.audio("speedBoost", "audio/speed_boost.mp3");
+    this.load.audio("ballReflect", "audio/ball_reflect.mp3");
   }
 
   create() {

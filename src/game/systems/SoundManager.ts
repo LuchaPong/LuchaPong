@@ -4,11 +4,19 @@ import { BallSpeedEffect } from "../effects/BallSpeed";
 import { PaddleEffect } from "../effects/PaddleSize";
 import type { AbstractEffect } from "../effects/AbstractEffect";
 
+type SoundConfig = {
+  key: string;
+  volume?: number;
+  rate?: number;
+  detune?: number;
+  seek?: number;
+};
+
 export class SoundManager {
   protected scene: Phaser.Scene;
   protected eventBus: TypedEventEmitter<GameEvents>;
-  protected effectSoundConfig: Map<typeof AbstractEffect, { key: string; volume?: number; rate?: number }> = new Map();
-  protected eventSoundConfig: Map<string, { key: string; volume?: number; rate?: number }> = new Map();
+  protected effectSoundConfig: Map<any, SoundConfig> = new Map();
+  protected eventSoundConfig: Map<string, SoundConfig> = new Map();
 
   constructor(scene: Phaser.Scene, eventBus: TypedEventEmitter<GameEvents>) {
     this.scene = scene;
@@ -38,13 +46,13 @@ export class SoundManager {
 
     // Map game events to sound keys
     this.eventSoundConfig.set("ball-reflect-on-paddle", {
-      key: "paddleHit",
+      key: "ballReflect",
       volume: 0.6,
       rate: 1.0,
     });
 
     this.eventSoundConfig.set("ball-reflect-on-scene-edge", {
-      key: "ballBounce",
+      key: "ballReflect",
       volume: 0.4,
       rate: 1.0,
     });
@@ -106,9 +114,27 @@ export class SoundManager {
   }
 
   /**
-   * Play a sound using a config object
+   * Apply random variations to sound config for variance
+   * Medium range variations for repeating sounds
    */
-  protected playSoundByConfig(config: { key: string; volume?: number; rate?: number }): void {
+  protected applyRandomVariations(config: SoundConfig): SoundConfig {
+    const baseRate = config.rate ?? 1.0;
+    const baseVolume = config.volume ?? 1.0;
+    const baseDetune = config.detune ?? 0;
+
+    return {
+      ...config,
+      rate: baseRate + (Math.random() - 0.5) * 0.2, // ±0.1 variation (0.9 to 1.1)
+      volume: Math.max(0, Math.min(1, baseVolume + (Math.random() - 0.5) * 0.2)), // ±0.1 variation, clamped 0-1
+      detune: baseDetune + (Math.random() - 0.5) * 200, // ±100 cents variation
+      seek: Math.random() * 0.1, // Random start position 0-0.1 seconds
+    };
+  }
+
+  /**
+   * Play a sound using a config object with random variations
+   */
+  protected playSoundByConfig(config: SoundConfig): void {
     try {
       // Always try to unlock audio (safe to call even if already unlocked)
       this.scene.sound.unlock();
@@ -118,9 +144,14 @@ export class SoundManager {
         return;
       }
 
+      // Apply random variations for variance
+      const variedConfig = this.applyRandomVariations(config);
+
       this.scene.sound.play(config.key, {
-        volume: config.volume ?? 1.0,
-        rate: config.rate ?? 1.0,
+        volume: variedConfig.volume ?? 1.0,
+        rate: variedConfig.rate ?? 1.0,
+        detune: variedConfig.detune ?? 0,
+        seek: variedConfig.seek ?? 0,
       });
     } catch (error) {
       // Silently handle playback errors
@@ -130,14 +161,14 @@ export class SoundManager {
   /**
    * Add or update an effect sound configuration
    */
-  setEffectSoundConfig(EffectClass: typeof AbstractEffect, config: { key: string; volume?: number; rate?: number }): void {
+  setEffectSoundConfig(EffectClass: typeof AbstractEffect, config: SoundConfig): void {
     this.effectSoundConfig.set(EffectClass, config);
   }
 
   /**
    * Add or update an event sound configuration
    */
-  setEventSoundConfig(eventName: string, config: { key: string; volume?: number; rate?: number }): void {
+  setEventSoundConfig(eventName: string, config: SoundConfig): void {
     this.eventSoundConfig.set(eventName, config);
   }
 }
