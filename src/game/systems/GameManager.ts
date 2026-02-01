@@ -62,6 +62,7 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     const defaults = getDefaultLoadouts();
     this.currentLoadout.left = defaults.left;
     this.currentLoadout.right = defaults.right;
+    this.applyLoadoutSkins();
 
     this.world = params.physics.world;
     this.scene = params.scene;
@@ -290,10 +291,21 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
 
     pickNewLoadout("left");
     pickNewLoadout("right");
+
+    this.applyLoadoutSkins();
   }
 
   otherPlayer(player: "left" | "right"): "left" | "right" {
     return player === "left" ? "right" : "left";
+  }
+
+  protected applyLoadoutSkins() {
+    (["left", "right"] as const).forEach((p) => {
+      const loadout = this.currentLoadout[p];
+      if (loadout) {
+        this.paddles[p].setSkinFrame(loadout.iconIndex);
+      }
+    });
   }
 
   protected playScoreExplosion(onComplete: () => void) {
@@ -335,4 +347,3 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     });
   }
 }
-

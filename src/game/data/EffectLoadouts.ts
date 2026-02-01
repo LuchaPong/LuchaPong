@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import type { AbstractEffect } from "../effects/AbstractEffect";
 import { BallInvisibleEffect } from "../effects/BallInvisible";
 import { BallSpeedEffect } from "../effects/BallSpeed";

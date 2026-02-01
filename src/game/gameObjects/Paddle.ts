@@ -1,5 +1,4 @@
 import type { TypedEventEmitter } from "../../utils/TypedEventEmitter";
-import { createWoodenPaddleSkin } from "../rendering/paddleSkin";
 import type { GameEvents } from "../systems/GameEvents";
 import type { Ball } from "./Ball";
 
@@ -39,28 +38,23 @@ export class Paddle extends Phaser.GameObjects.Container {
     scene.add.existing(this);
     scene.physics.add.existing(this);
 
-    this.width = 25;
+    this.width = 50;
     this.height = 150;
 
     this.body.setSize(this.width, this.height);
     this.body.setImmovable(true);
     this.body.setCollideWorldBounds(true);
 
-    this.paddleSprite = new Phaser.GameObjects.Sprite(scene, 0, 0, "paddle");
-    this.paddleSprite.setScale(
-      25 / this.paddleSprite.width,
-      150 / this.paddleSprite.height,
+    this.paddleSprite = new Phaser.GameObjects.Sprite(
+      scene,
+      0,
+      0,
+      "paddles",
+      0,
     );
-    this.paddleSprite.setAlpha(0.25);
+    this.paddleSprite.setAlpha(1);
     this.add(this.paddleSprite);
-
-    const woodLayer = createWoodenPaddleSkin(scene, {
-      player: _player,
-      width: this.width,
-      height: this.height,
-      centerSize: this.centerSize,
-    });
-    this.add(woodLayer);
+    this.rescaleSprite();
 
     const offsetSides = (this.centerSize + 1) / 4;
 
@@ -114,12 +108,17 @@ export class Paddle extends Phaser.GameObjects.Container {
     Object.values(this.controls).forEach((control) => {
       const text = this.controlTexts[String.fromCharCode(control.keyCode)];
 
+      if (this.scene.physics.config.debug) {
+        text.setVisible(true);
+      } else {
+        text.setVisible(false);
+      }
       if (control.isDown) {
         text.setScale(0.9);
-        text.setAlpha(0.6);
+        text.setAlpha(0.3);
       } else {
         text.setScale(1);
-        text.setAlpha(1);
+        text.setAlpha(0.5);
       }
     });
 
@@ -250,6 +249,18 @@ export class Paddle extends Phaser.GameObjects.Container {
     ball.setNewVelocityByAngle(newAngle);
 
     this.eventBus?.emit("ball-reflect-on-paddle", this.player, newAngle);
+  }
+
+  setSkinFrame(frameIndex: number) {
+    this.paddleSprite.setFrame(frameIndex);
+    this.rescaleSprite();
+  }
+
+  protected rescaleSprite() {
+    this.paddleSprite.setScale(
+      (this.width / this.paddleSprite.width) * 1.4,
+      (this.height / this.paddleSprite.height) * 1.2,
+    );
   }
 }
 
