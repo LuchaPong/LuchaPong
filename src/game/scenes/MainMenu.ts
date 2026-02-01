@@ -54,6 +54,10 @@ export class MainMenu extends Scene {
       },
     );
 
+    this.input.once("pointerdown", () => {
+      this.sound.unlock();
+    });
+
     EventBus.emit("current-scene-ready", this);
   }
 }

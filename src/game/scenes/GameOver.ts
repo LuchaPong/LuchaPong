@@ -13,10 +13,6 @@ export class GameOver extends Scene {
     super("GameOver");
   }
 
-  preload() {
-    this.load.audio("gameover", "audio/game_over.mp3");
-  }
-
   create(data?: { winner?: "left" | "right" }) {
     // Use last frame to render over
     this.add.image(0, 0, "lastGameFrame").setOrigin(0);
@@ -75,7 +71,7 @@ export class GameOver extends Scene {
       },
     );
 
-    this.sound.play("gameover", { rate: 0.85 });
+    this.sound.play("gameOver", { rate: 0.85 });
     EventBus.emit("current-scene-ready", this);
   }
 

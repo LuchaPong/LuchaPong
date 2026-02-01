@@ -13,6 +13,7 @@ export function createInteractiveButton(
 
   btn.on("pointerover", () => {
     btn.setFrame(0);
+    context.sound.play("buttonSnap", { volume: 0.5, seek: 0.05 });
   });
 
   btn.on("pointerout", () => {
