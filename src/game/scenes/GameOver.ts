@@ -36,20 +36,23 @@ export class GameOver extends Scene {
         this.scene.start("Game");
       },
     );
-    this.settingsButton = createInteractiveButton(
-      this,
-      "SETTINGS",
-      this.scale.width / 2,
-      this.scale.height / 2 + this.restartButton.height,
-      () => {
-        this.scene.start("Controls");
-      },
-    );
+    // TODO: This needs a refactor on how the control render works.
+    // this.settingsButton = createInteractiveButton(
+    //   this,
+    //   "SETTINGS",
+    //   this.scale.width / 2,
+    //   this.scale.height / 2 + this.restartButton.height,
+    //   () => {
+    //     this.scene.start("Controls");
+    //   },
+    // );
     this.menuButton = createInteractiveButton(
       this,
       "MAIN MENU",
       this.scale.width / 2,
-      this.scale.height / 2 + 2 * this.settingsButton.height,
+      // NOTE: If the above TODO is fixed, the following line should replace the height.
+      // this.scale.height / 2 + 2 * this.restartButton.height,
+      this.scale.height / 2 + this.restartButton.height,
       () => {
         this.scene.start("MainMenu");
       },
