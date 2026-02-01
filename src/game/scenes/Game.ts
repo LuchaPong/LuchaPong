@@ -33,7 +33,7 @@ export class Game extends Scene {
   create() {
     const { width, height } = this.scale;
     this.camera = this.cameras.main;
-    this.camera.setBackgroundColor(0x5d5d5d);
+    this.camera.setBackgroundColor(0x1a2332);
     this.camera.zoom = 1;
 
     const bounds = this.add.layer([

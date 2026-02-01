@@ -1,6 +1,7 @@
 import { Events } from "phaser";
 import type { TypedEventEmitter } from "../../utils/TypedEventEmitter";
 import type { AbstractEffect } from "../effects/AbstractEffect";
+import { BallSpeedEffect } from "../effects/BallSpeed";
 import { PaddleEffect } from "../effects/PaddleSize";
 import type { Ball } from "../gameObjects/Ball";
 import { Paddle } from "../gameObjects/Paddle";
@@ -69,13 +70,11 @@ export class GameManager implements TypedEventEmitter<GameEvents> {
     this.on("paddle-skill-used", (player, skillNumber) => {
       const selfPaddle =
         player === "left" ? this.paddles.left : this.paddles.right;
-      const otherPaddle =
-        player === "left" ? this.paddles.right : this.paddles.left;
 
       const newEffect =
         skillNumber === 1
           ? new PaddleEffect(this, 1.5, 0.75, selfPaddle)
-          : new PaddleEffect(this, 0.7, 1.5, otherPaddle);
+          : new BallSpeedEffect(this, this.ball);
 
       if (this._activeEffects.some((e) => e.isExclusiveWith(newEffect))) {
         return;
