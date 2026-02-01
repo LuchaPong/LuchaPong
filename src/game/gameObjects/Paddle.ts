@@ -1,4 +1,5 @@
 import type { TypedEventEmitter } from "../../utils/TypedEventEmitter";
+import { createWoodenPaddleSkin } from "../rendering/paddleSkin";
 import type { GameEvents } from "../systems/GameEvents";
 import type { Ball } from "./Ball";
 
@@ -49,21 +50,18 @@ export class Paddle extends Phaser.GameObjects.Container {
       25 / this.paddleSprite.width,
       150 / this.paddleSprite.height,
     );
-
+    this.paddleSprite.setAlpha(0.25);
     this.add(this.paddleSprite);
 
-    const paddleCenterSprite = new Phaser.GameObjects.Sprite(
-      scene,
-      0,
-      0,
-      "paddle",
-    );
-    paddleCenterSprite.setScale(
-      25 / paddleCenterSprite.width,
-      (150 / paddleCenterSprite.height) * this.centerSize,
-    );
-    paddleCenterSprite.setTint(_player === "left" ? 0x3498db : 0xe74c3c);
-    this.add(paddleCenterSprite);
+    const playerColor = _player === "left" ? 0x3498db : 0xe74c3c;
+
+    const woodLayer = createWoodenPaddleSkin(scene, {
+      width: this.width,
+      height: this.height,
+      centerSize: this.centerSize,
+      playerColor,
+    });
+    this.add(woodLayer);
 
     const offsetSides = (this.centerSize + 1) / 4;
 
@@ -255,4 +253,3 @@ export class Paddle extends Phaser.GameObjects.Container {
     this.eventBus?.emit("ball-reflect-on-paddle", this.player, newAngle);
   }
 }
-
