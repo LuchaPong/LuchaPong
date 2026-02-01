@@ -1,13 +1,14 @@
 import { Scene } from "phaser";
 import { storeTexture } from "../../utils/Utils";
 import { EventBus } from "../EventBus";
+import { ActiveEffectsUI } from "../gameObjects/ActiveEffectsUI";
 import { Ball } from "../gameObjects/Ball";
 import { Bound } from "../gameObjects/Bound";
 import { Paddle } from "../gameObjects/Paddle";
 import { GameManager } from "../systems/GameManager";
 import { SoundManager } from "../systems/SoundManager";
 
-const fontStyle = {
+export const fontStyle = {
   fontFamily: "Arial",
   fontSize: 48,
   color: "#ffffff",
@@ -39,6 +40,7 @@ export class Game extends Scene {
       }
     | undefined
   > = { left: undefined, right: undefined };
+  activeEffectsUI: ActiveEffectsUI;
   constructor() {
     super("Game");
   }
@@ -111,14 +113,6 @@ export class Game extends Scene {
       ).setName("bound-right"),
     ]);
 
-    this.effectsText = this.add
-      .text(10, worldBounds.top + 10, "Active Effects:")
-      .setDepth(1000)
-      .setFontSize(16)
-      .setFontFamily("Arial Black")
-      .setColor("#ffffff")
-      .setStroke("#000000", 4);
-
     this.timerText = this.add
       .text(worldBounds.centerX, worldBounds.top + 8, "3", fontStyle)
       .setOrigin(0.5, 0);
@@ -166,6 +160,15 @@ export class Game extends Scene {
       scene: this,
       physics: this.physics,
     });
+
+    this.activeEffectsUI = new ActiveEffectsUI(
+      this.gameManager,
+      this,
+      worldBounds.centerX,
+      worldBounds.bottom -
+        this.cardSize.height / 2 +
+        this.cardSize.height * 0.25,
+    );
 
     // Initialize sound manager to react to game events
     this.soundManager = new SoundManager(this, this.gameManager);
@@ -232,12 +235,7 @@ export class Game extends Scene {
     }
 
     this.gameManager.update(time, delta);
-
-    this.effectsText.setText(
-      `Active Effects:\n${this.gameManager.activeEffects
-        .map((e) => `- ${e} (${(e.durationMs / 1000).toFixed(0)}s left)`)
-        .join("\n")}`,
-    );
+    this.activeEffectsUI.update(time, delta);
   }
 
   createPlayerCard(

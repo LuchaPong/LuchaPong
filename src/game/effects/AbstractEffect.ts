@@ -4,6 +4,8 @@ export abstract class AbstractEffect {
   protected gameManager: GameManager;
   protected _durationMs: number = 5000;
 
+  abstract get spriteName(): string;
+
   get durationMs(): number {
     return this._durationMs;
   }

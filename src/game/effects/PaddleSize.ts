@@ -3,6 +3,12 @@ import type { GameManager } from "../systems/GameManager";
 import { AbstractEffect } from "./AbstractEffect";
 
 export class PaddleEffect extends AbstractEffect {
+  override get spriteName(): string {
+    return this.sizeMultiplier > 1
+      ? "effect/paddle-enlarge"
+      : "effect/paddle-shrink";
+  }
+
   constructor(
     gameManager: GameManager,
     protected sizeMultiplier: number,

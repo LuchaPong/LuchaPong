@@ -42,6 +42,20 @@ export class Preloader extends Scene {
     });
     this.load.image("explosion", "assets/animations/explosion.gif");
 
+    const effectSprites = [
+      "paddle-enlarge",
+      "paddle-shrink",
+      "ball-speed-up",
+      "ball-slow-down",
+    ];
+
+    effectSprites.forEach((spriteName) => {
+      this.load.image(
+        `effect/${spriteName}`,
+        `assets/effects/${spriteName}.png`,
+      );
+    });
+
     // Load sound effects
     this.load.audio("speedBoost", "audio/speed_boost.mp3");
     this.load.audio("ballReflect", "audio/ball_reflect.mp3");
@@ -55,3 +69,4 @@ export class Preloader extends Scene {
     this.scene.start("MainMenu");
   }
 }
+
