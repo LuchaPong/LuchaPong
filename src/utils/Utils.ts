@@ -30,14 +30,16 @@ export function createText(
   x: number,
   y: number,
   fontSize: number,
-) {
-  context.add
+  fontFamily: string = "Rubik Black",
+  strokeThickness = 7,
+): Phaser.GameObjects.Text {
+  return context.add
     .text(x, y, label, {
-      fontFamily: "Arial Black",
+      fontFamily: fontFamily,
       fontSize: fontSize,
       color: "#ffffff",
       stroke: "#000000",
-      strokeThickness: 8,
+      strokeThickness: strokeThickness,
       align: "center",
     })
     .setOrigin(0.5, 0.7);

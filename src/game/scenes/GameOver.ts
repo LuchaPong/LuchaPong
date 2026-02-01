@@ -6,6 +6,8 @@ export class GameOver extends Scene {
   restartButton: GameObjects.Sprite;
   settingsButton: GameObjects.Sprite;
   menuButton: GameObjects.Sprite;
+  gameOverTitle: GameObjects.Text;
+  winnerText: GameObjects.Text;
 
   constructor() {
     super("GameOver");
@@ -21,7 +23,15 @@ export class GameOver extends Scene {
 
     const boxHeight = 150;
     const startY = (this.scale.height - 5 * boxHeight) / 2;
-    createText(this, "GAME OVER", this.scale.width / 2, startY, 64);
+    this.gameOverTitle = createText(
+      this,
+      "GAME OVER",
+      this.scale.width / 2,
+      startY,
+      100,
+      "Rubik Dirt",
+      15,
+    );
 
     const winnerLabel =
       data?.winner === "left"
