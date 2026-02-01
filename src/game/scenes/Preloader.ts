@@ -32,7 +32,10 @@ export class Preloader extends Scene {
     this.load.image("ball", "assets/ball.png");
     this.load.image("paddle", "assets/paddle.png");
     this.load.image("gasCloud", "assets/gas_cloud.png");
-    this.load.spritesheet("button", "assets/button.png", { frameWidth: 511, frameHeight: 135 });
+    this.load.spritesheet("button", "assets/button.png", {
+      frameWidth: 511,
+      frameHeight: 135,
+    });
     this.load.image("player_red", "assets/player/player_red.png");
     this.load.image("player_blue", "assets/player/player_blue.png");
     this.load.svg("heart", "assets/heart.svg", { width: 64, height: 64 });
@@ -47,6 +50,8 @@ export class Preloader extends Scene {
       "paddle-shrink",
       "ball-speed-up",
       "ball-slow-down",
+      "spawn-projectile",
+      "ball-invisible",
     ];
 
     effectSprites.forEach((spriteName) => {

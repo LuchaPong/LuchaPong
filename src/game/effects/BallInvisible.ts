@@ -3,6 +3,10 @@ import type { GameManager } from "../systems/GameManager";
 import { AbstractEffect } from "./AbstractEffect";
 
 export class BallInvisibleEffect extends AbstractEffect {
+  override get spriteName(): string {
+    return "effect/ball-invisible";
+  }
+
   constructor(
     gameManager: GameManager,
     protected ball: Ball,
@@ -31,3 +35,4 @@ export class BallInvisibleEffect extends AbstractEffect {
     return "Ball Invisible";
   }
 }
+

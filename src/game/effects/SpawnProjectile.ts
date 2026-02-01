@@ -3,26 +3,36 @@ import { GameManager } from "../systems/GameManager";
 import { AbstractEffect } from "./AbstractEffect";
 
 export class SpawnProjectile extends AbstractEffect {
-	constructor(
-		gameManager: GameManager,
-		protected paddle: Paddle
-	) {
-		super(gameManager);
-	}
+  override get spriteName(): string {
+    return "effect/spawn-projectile";
+  }
 
-	override apply(): void {
-		super.apply();
-		const initialPosition = { x: this.paddle.x, y: this.paddle.y };
-		const velocity = this.paddle.name == "left-paddle" ? { x: 450, y: 0 } : { x: -450, y: 0 };
-		this.gameManager.emit("spawn-projectile", "gas_cloud", initialPosition, velocity);
-	}
+  constructor(
+    gameManager: GameManager,
+    protected paddle: Paddle,
+  ) {
+    super(gameManager);
+  }
 
-	override remove(): void {
-		super.remove();
-	}
+  override apply(): void {
+    super.apply();
+    const initialPosition = { x: this.paddle.x, y: this.paddle.y };
+    const velocity =
+      this.paddle.name == "left-paddle" ? { x: 450, y: 0 } : { x: -450, y: 0 };
+    this.gameManager.emit(
+      "spawn-projectile",
+      "gas_cloud",
+      initialPosition,
+      velocity,
+    );
+  }
 
-	toString(): string {
-		return `Projectile Spawned`;
-	}
+  override remove(): void {
+    super.remove();
+  }
+
+  toString(): string {
+    return `Projectile Spawned`;
+  }
 }
 
