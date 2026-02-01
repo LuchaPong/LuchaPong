@@ -30,6 +30,8 @@ export class Preloader extends Scene {
     this.load.image("star", "star.png");
     this.load.image("ball", "ball.png");
     this.load.image("paddle", "paddle.png");
+    this.load.spritesheet("button", "button.png", { frameWidth: 511, frameHeight: 135 });
+
   }
 
   create() {
