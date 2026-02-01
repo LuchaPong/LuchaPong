@@ -252,3 +252,4 @@ export class Paddle extends Phaser.GameObjects.Container {
     this.eventBus?.emit("ball-reflect-on-paddle", this.player, newAngle);
   }
 }
+

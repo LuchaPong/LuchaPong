@@ -5,7 +5,6 @@ export type PaddleSkinOptions = {
   width: number;
   height: number;
   centerSize: number;
-  playerColor: number;
 };
 
 export function createWoodenPaddleSkin(
@@ -57,3 +56,4 @@ export function createWoodenPaddleSkin(
 
   return g;
 }
+
